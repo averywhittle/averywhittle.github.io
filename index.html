@@ -2,9 +2,89 @@
 <html>
 <head>
   <title>Welcome to My Site</title>
+  <style>
+  body {
+    margin: 0;
+    overflow: hidden;
+    background-color: #ABD4E6;
+  }
+  .plane {
+    position: absolute;
+    left: 0;
+    bottom: -150px;
+    background: url('images/planes_spritesheet.gif') no-repeat;
+    image-rendering: pixelated;
+    animation: flyUp linear infinite;
+  }
+  @keyframes flyUp {
+    to {
+      bottom: 110%;
+    }
+  }
+  </style>
 </head>
 <body>
-  <h1>Hello from GitHub Pages!</h1>
-  <p>This is my personal website.</p>
+  <style>
+    /* Automatically detected plane sprites - positions and speeds set by JavaScript */
+    .plane:nth-child(2) {
+      width: 60px;
+      height: 92px;
+      background-position: -396px -188px;
+    }
+    .plane:nth-child(3) {
+      width: 68px;
+      height: 100px;
+      background-position: -392px -316px;
+    }
+    .plane:nth-child(4) {
+      width: 92px;
+      height: 112px;
+      background-position: -380px -456px;
+    }
+    .plane:nth-child(5) {
+      width: 84px;
+      height: 112px;
+      background-position: -384px -604px;
+    }
+    .plane:nth-child(6) {
+      width: 60px;
+      height: 92px;
+      background-position: -512px -188px;
+    }
+  </style>
+
+  <div class="plane"></div>
+  <div class="plane"></div>
+  <div class="plane"></div>
+  <div class="plane"></div>
+  <div class="plane"></div>
+
+  <h1 style="position: relative; z-index: 1;">Hello from GitHub Pages!</h1>
+  <p style="position: relative; z-index: 1;">This is my personal website.</p>
+
+  <script>
+    // Randomize plane speeds and positions
+    document.addEventListener('DOMContentLoaded', function() {
+      const planes = document.querySelectorAll('.plane');
+      
+      planes.forEach((plane, index) => {
+        // Random horizontal position (5% to 95%)
+        const randomLeft = Math.random() * 90 + 5;
+        plane.style.left = randomLeft + '%';
+        
+        // Random speed (2 to 6 seconds)
+        const randomDuration = Math.random() * 4 + 2;
+        plane.style.animationDuration = randomDuration + 's';
+        
+        // Random delay (0 to 3 seconds)
+        const randomDelay = Math.random() * 3;
+        plane.style.animationDelay = randomDelay + 's';
+        
+        // Random starting position offset (-150 to -300px)
+        const randomStart = -(Math.random() * 150 + 150);
+        plane.style.bottom = randomStart + 'px';
+      });
+    });
+  </script>
 </body>
 </html>

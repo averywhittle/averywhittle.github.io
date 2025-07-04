@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Sprite Region Selector</title>
+  <style>
+    body {
+      margin: 20px;
+      font-family: monospace;
+      background: #222;
+      color: white;
+    }
+    #container {
+      position: relative;
+      display: inline-block;
+      border: 2px solid #444;
+    }
+    #spriteImage {
+      display: block;
+      image-rendering: pixelated;
+      cursor: crosshair;
+    }
+    #selection {
+      position: absolute;
+      border: 2px solid #ff0;
+      background: rgba(255, 255, 0, 0.2);
+      pointer-events: none;
+      display: none;
+    }
+    #output {
+      margin-top: 20px;
+      padding: 10px;
+      background: #333;
+      border-radius: 4px;
+    }
+    .coord {
+      color: #0f0;
+    }
+    #zoom {
+      margin: 10px 0;
+    }
+  </style>
+</head>
+<body>
+  <h1>Sprite Region Selector</h1>
+  <p>Click and drag to select a region. The coordinates will appear below.</p>
+  
+  <div>
+    <label>Zoom: <input type="range" id="zoom" min="1" max="4" value="2" step="0.5"></label>
+    <span id="zoomValue">2x</span>
+  </div>
+
+  <div id="container">
+    <img id="spriteImage" src="images/planes_spritesheet.gif" alt="Sprite Sheet">
+    <div id="selection"></div>
+  </div>
+
+  <div id="output">
+    <p>Click and drag on the sprite sheet to select a region</p>
+  </div>
+
+  <script>
+    const container = document.getElementById('container');
+    const img = document.getElementById('spriteImage');
+    const selection = document.getElementById('selection');
+    const output = document.getElementById('output');
+    const zoomSlider = document.getElementById('zoom');
+    const zoomValue = document.getElementById('zoomValue');
+    
+    let isSelecting = false;
+    let startX, startY;
+    let scale = 2;
+
+    // Set initial zoom
+    img.style.width = img.naturalWidth * scale + 'px';
+    
+    zoomSlider.addEventListener('input', (e) => {
+      scale = parseFloat(e.target.value);
+      img.style.width = img.naturalWidth * scale + 'px';
+      zoomValue.textContent = scale + 'x';
+    });
+
+    container.addEventListener('mousedown', (e) => {
+      if (e.target === img) {
+        isSelecting = true;
+        const rect = img.getBoundingClientRect();
+        startX = (e.clientX - rect.left) / scale;
+        startY = (e.clientY - rect.top) / scale;
+        
+        selection.style.left = startX * scale + 'px';
+        selection.style.top = startY * scale + 'px';
+        selection.style.width = '0px';
+        selection.style.height = '0px';
+        selection.style.display = 'block';
+      }
+    });
+
+    container.addEventListener('mousemove', (e) => {
+      if (isSelecting) {
+        const rect = img.getBoundingClientRect();
+        const currentX = (e.clientX - rect.left) / scale;
+        const currentY = (e.clientY - rect.top) / scale;
+        
+        const left = Math.min(startX, currentX);
+        const top = Math.min(startY, currentY);
+        const width = Math.abs(currentX - startX);
+        const height = Math.abs(currentY - startY);
+        
+        selection.style.left = left * scale + 'px';
+        selection.style.top = top * scale + 'px';
+        selection.style.width = width * scale + 'px';
+        selection.style.height = height * scale + 'px';
+        
+        // Update output in real-time
+        updateOutput(left, top, width, height);
+      }
+    });
+
+    window.addEventListener('mouseup', () => {
+      isSelecting = false;
+    });
+
+    function updateOutput(x, y, width, height) {
+      // Round to integers
+      x = Math.round(x);
+      y = Math.round(y);
+      width = Math.round(width);
+      height = Math.round(height);
+      
+      output.innerHTML = `
+        <p><strong>Selected Region:</strong></p>
+        <p>Position: <span class="coord">(${x}, ${y})</span></p>
+        <p>Size: <span class="coord">${width} × ${height}</span></p>
+        <p>CSS background-position: <span class="coord">-${x}px -${y}px</span></p>
+        <p>Bottom-right corner: <span class="coord">(${x + width}, ${y + height})</span></p>
+        
+        <p style="margin-top: 20px"><strong>Copy this for your CSS:</strong></p>
+        <pre style="background: #000; padding: 10px; border-radius: 4px">
+.plane {
+  width: ${width}px;
+  height: ${height}px;
+  background-position: -${x}px -${y}px;
+}</pre>
+      `;
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Auto-Detected Sprites</title>
+    <style>
+        body { 
+            background: #ABD4E6; 
+            padding: 20px;
+            font-family: monospace;
+        }
+        .preview {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        .sprite-box {
+            background: white;
+            padding: 10px;
+            border: 2px solid #000;
+        }
+        .sprite-img {
+            image-rendering: pixelated;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <h1>Auto-Detected Plane Sprites</h1>
+    <div class="preview">
+
+        <div class="sprite-box">
+            <img src="auto_sprites/plane_2.png" class="sprite-img" width="120" height="184">
+            <p>Plane 2<br>
+            60x92px<br>
+            Pos: (396, 188)</p>
+        </div>
+        <div class="sprite-box">
+            <img src="auto_sprites/plane_3.png" class="sprite-img" width="136" height="200">
+            <p>Plane 3<br>
+            68x100px<br>
+            Pos: (392, 316)</p>
+        </div>
+        <div class="sprite-box">
+            <img src="auto_sprites/plane_4.png" class="sprite-img" width="184" height="224">
+            <p>Plane 4<br>
+            92x112px<br>
+            Pos: (380, 456)</p>
+        </div>
+        <div class="sprite-box">
+            <img src="auto_sprites/plane_5.png" class="sprite-img" width="168" height="224">
+            <p>Plane 5<br>
+            84x112px<br>
+            Pos: (384, 604)</p>
+        </div>
+        <div class="sprite-box">
+            <img src="auto_sprites/plane_6.png" class="sprite-img" width="120" height="184">
+            <p>Plane 6<br>
+            60x92px<br>
+            Pos: (512, 188)</p>
+        </div>
+    </div>
+    <h2>How these were detected:</h2>
+    <ul>
+        <li>Connected component analysis to find isolated sprites</li>
+        <li>Filtered by size (30-120px) and fill ratio (>20%)</li>
+        <li>Selected sprites from thrust columns (x=300-800)</li>
+        <li>Chose diverse sprites from different rows</li>
+    </ul>
+</body>
+</html>

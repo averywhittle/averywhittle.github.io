@@ -1,0 +1,42 @@
+/* Automatically detected plane sprites */
+
+    .plane:nth-child(2) {
+      top: 50%;
+      width: 60px;
+      height: 92px;
+      animation-duration: 8s;
+      animation-delay: 0.0s;
+      background-position: -396px -188px;
+    }
+    .plane:nth-child(3) {
+      top: 58%;
+      width: 68px;
+      height: 100px;
+      animation-duration: 10s;
+      animation-delay: 1.5s;
+      background-position: -392px -316px;
+    }
+    .plane:nth-child(4) {
+      top: 66%;
+      width: 92px;
+      height: 112px;
+      animation-duration: 12s;
+      animation-delay: 3.0s;
+      background-position: -380px -456px;
+    }
+    .plane:nth-child(5) {
+      top: 74%;
+      width: 84px;
+      height: 112px;
+      animation-duration: 14s;
+      animation-delay: 4.5s;
+      background-position: -384px -604px;
+    }
+    .plane:nth-child(6) {
+      top: 82%;
+      width: 60px;
+      height: 92px;
+      animation-duration: 16s;
+      animation-delay: 6.0s;
+      background-position: -512px -188px;
+    }

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Sprite Position Tester</title>
+  <style>
+    body {
+      margin: 20px;
+      background-color: #ABD4E6;
+    }
+    .sprite-grid {
+      display: grid;
+      grid-template-columns: repeat(8, 80px);
+      gap: 10px;
+      background: #333;
+      padding: 20px;
+    }
+    .sprite {
+      width: 64px;
+      height: 64px;
+      background: url('images/planes_spritesheet.gif') no-repeat;
+      image-rendering: pixelated;
+      border: 1px solid red;
+    }
+    .label {
+      color: white;
+      font-size: 10px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <h1>Sprite Position Finder</h1>
+  <div class="sprite-grid">
+    <!-- Row 1 (F16) -->
+    <div>
+      <div class="sprite" style="background-position: 0 -128px;"></div>
+      <div class="label">0,-128</div>
+    </div>
+    <div>
+      <div class="sprite" style="background-position: -64px -128px;"></div>
+      <div class="label">-64,-128</div>
+    </div>
+    <div>
+      <div class="sprite" style="background-position: -128px -128px;"></div>
+      <div class="label">-128,-128</div>
+    </div>
+    <div>
+      <div class="sprite" style="background-position: -192px -128px;"></div>
+      <div class="label">-192,-128</div>
+    </div>
+    <div>
+      <div class="sprite" style="background-position: -256px -128px;"></div>
+      <div class="label">-256,-128</div>
+    </div>
+    <div>
+      <div class="sprite" style="background-position: -320px -128px;"></div>
+      <div class="label">-320,-128</div>
+    </div>
+    <div>
+      <div class="sprite" style="background-position: -384px -128px;"></div>
+      <div class="label">-384,-128</div>
+    </div>
+    <div>
+      <div class="sprite" style="background-position: -448px -128px;"></div>
+      <div class="label">-448,-128</div>
+    </div>
+    
+    <!-- Row 2 (GF2000) -->
+    <div>
+      <div class="sprite" style="background-position: 0 -256px;"></div>
+      <div class="label">0,-256</div>
+    </div>
+    <div>
+      <div class="sprite" style="background-position: -64px -256px;"></div>
+      <div class="label">-64,-256</div>
+    </div>
+    <div>
+      <div class="sprite" style="background-position: -128px -256px;"></div>
+      <div class="label">-128,-256</div>
+    </div>
+    <div>
+      <div class="sprite" style="background-position: -192px -256px;"></div>
+      <div class="label">-192,-256</div>
+    </div>
+    <div>
+      <div class="sprite" style="background-position: -256px -256px;"></div>
+      <div class="label">-256,-256</div>
+    </div>
+    <div>
+      <div class="sprite" style="background-position: -320px -256px;"></div>
+      <div class="label">-320,-256</div>
+    </div>
+    <div>
+      <div class="sprite" style="background-position: -384px -256px;"></div>
+      <div class="label">-384,-256</div>
+    </div>
+    <div>
+      <div class="sprite" style="background-position: -448px -256px;"></div>
+      <div class="label">-448,-256</div>
+    </div>
+    
+    <!-- Row 3 (F22) -->
+    <div>
+      <div class="sprite" style="background-position: 0 -384px;"></div>
+      <div class="label">0,-384</div>
+    </div>
+    <div>
+      <div class="sprite" style="background-position: -64px -384px;"></div>
+      <div class="label">-64,-384</div>
+    </div>
+    <div>
+      <div class="sprite" style="background-position: -128px -384px;"></div>
+      <div class="label">-128,-384</div>
+    </div>
+    <div>
+      <div class="sprite" style="background-position: -192px -384px;"></div>
+      <div class="label">-192,-384</div>
+    </div>
+    <div>
+      <div class="sprite" style="background-position: -256px -384px;"></div>
+      <div class="label">-256,-384</div>
+    </div>
+    <div>
+      <div class="sprite" style="background-position: -320px -384px;"></div>
+      <div class="label">-320,-384</div>
+    </div>
+    <div>
+      <div class="sprite" style="background-position: -384px -384px;"></div>
+      <div class="label">-384,-384</div>
+    </div>
+    <div>
+      <div class="sprite" style="background-position: -448px -384px;"></div>
+      <div class="label">-448,-384</div>
+    </div>
+  </div>
+  <p>Open this in browser to see which positions show the planes with thrust animation.</p>
+</body>
+</html>

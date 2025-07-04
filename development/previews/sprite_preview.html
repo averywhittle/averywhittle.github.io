@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Extracted Sprites Preview</title>
+    <style>
+        body { 
+            background: #ABD4E6; 
+            padding: 20px;
+            font-family: monospace;
+        }
+        .sprite-container {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .sprite {
+            border: 1px solid #000;
+            padding: 10px;
+            background: white;
+            text-align: center;
+        }
+        .sprite img {
+            display: block;
+            image-rendering: pixelated;
+            width: 128px;
+            height: 128px;
+        }
+        .animation {
+            position: relative;
+            width: 128px;
+            height: 128px;
+            margin: 20px;
+        }
+        .animation img {
+            position: absolute;
+            opacity: 0;
+            animation: fadeSequence 1.6s infinite;
+        }
+        @keyframes fadeSequence {
+            0%, 100% { opacity: 0; }
+            10% { opacity: 1; }
+            20% { opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <h1>Extracted SU-33 Sprites from Row 5</h1>
+    <p>Found 8 sprites in row 5</p>
+    
+    <h2>Individual Frames</h2>
+    <div class="sprite-container">
+        
+        <div class="sprite">
+            <img src="extracted_sprites/su33_frame_1.png">
+            <p>Frame 1</p>
+        </div>
+        <div class="sprite">
+            <img src="extracted_sprites/su33_frame_2.png">
+            <p>Frame 2</p>
+        </div>
+        <div class="sprite">
+            <img src="extracted_sprites/su33_frame_3.png">
+            <p>Frame 3</p>
+        </div>
+        <div class="sprite">
+            <img src="extracted_sprites/su33_frame_4.png">
+            <p>Frame 4</p>
+        </div>
+        <div class="sprite">
+            <img src="extracted_sprites/su33_frame_5.png">
+            <p>Frame 5</p>
+        </div>
+        <div class="sprite">
+            <img src="extracted_sprites/su33_frame_6.png">
+            <p>Frame 6</p>
+        </div>
+        <div class="sprite">
+            <img src="extracted_sprites/su33_frame_7.png">
+            <p>Frame 7</p>
+        </div>
+        <div class="sprite">
+            <img src="extracted_sprites/su33_frame_8.png">
+            <p>Frame 8</p>
+        </div>
+    </div>
+    
+    <h2>Animation Preview</h2>
+    <div class="animation">
+        <img src="extracted_sprites/su33_frame_1.png" style="animation-delay: 0.0s;">
+        <img src="extracted_sprites/su33_frame_2.png" style="animation-delay: 0.2s;">
+        <img src="extracted_sprites/su33_frame_3.png" style="animation-delay: 0.4s;">
+        <img src="extracted_sprites/su33_frame_4.png" style="animation-delay: 0.6000000000000001s;">
+        <img src="extracted_sprites/su33_frame_5.png" style="animation-delay: 0.8s;">
+        <img src="extracted_sprites/su33_frame_6.png" style="animation-delay: 1.0s;">
+        <img src="extracted_sprites/su33_frame_7.png" style="animation-delay: 1.2000000000000002s;">
+        <img src="extracted_sprites/su33_frame_8.png" style="animation-delay: 1.4000000000000001s;">
+    </div>
+</body>
+</html>
