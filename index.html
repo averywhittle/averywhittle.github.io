@@ -35,6 +35,16 @@
     font-size: 14px;
     z-index: 100;
   }
+  
+  .projectile {
+    position: absolute;
+    width: 3px;
+    height: 8px;
+    background: #ffff00;
+    border-radius: 2px;
+    box-shadow: 0 0 4px #ffff00;
+    z-index: 5;
+  }
   </style>
 </head>
 <body>
@@ -85,7 +95,8 @@
     W - Move Up<br>
     A - Move Left<br>
     S - Move Down<br>
-    D - Move Right
+    D - Move Right<br>
+    Space - Fire Projectile
   </div>
 
   <h1 style="position: relative; z-index: 1;">Hello from GitHub Pages!</h1>
@@ -123,6 +134,11 @@
       let playerY = 50; // Position percentage
       const moveSpeed = 2; // Movement speed percentage per keypress
       let isSpawned = false; // Track if plane is spawned
+      let currentRotation = 0; // Track current plane rotation
+      
+      // Projectile system
+      const projectiles = [];
+      const projectileSpeed = 4; // Speed of projectiles
       
       // Track pressed keys for smooth movement
       const keys = {};
@@ -166,13 +182,73 @@
         e.preventDefault();
       });
       
+      // Projectile creation function
+      function createProjectile() {
+        if (!isSpawned) return;
+        
+        const projectile = document.createElement('div');
+        projectile.className = 'projectile';
+        
+        // Position at player's location
+        projectile.style.left = playerX + '%';
+        projectile.style.top = playerY + '%';
+        
+        // Calculate direction based on current rotation
+        const radians = currentRotation * (Math.PI / 180);
+        const directionX = Math.sin(radians);
+        const directionY = -Math.cos(radians);
+        
+        // Store projectile data
+        const projectileData = {
+          element: projectile,
+          x: playerX,
+          y: playerY,
+          directionX: directionX,
+          directionY: directionY
+        };
+        
+        projectiles.push(projectileData);
+        document.body.appendChild(projectile);
+      }
+      
+      // Update projectiles
+      function updateProjectiles() {
+        for (let i = projectiles.length - 1; i >= 0; i--) {
+          const proj = projectiles[i];
+          
+          // Move projectile
+          proj.x += proj.directionX * projectileSpeed;
+          proj.y += proj.directionY * projectileSpeed;
+          
+          // Update position
+          proj.element.style.left = proj.x + '%';
+          proj.element.style.top = proj.y + '%';
+          
+          // Remove if off screen
+          if (proj.x < -5 || proj.x > 105 || proj.y < -5 || proj.y > 105) {
+            proj.element.remove();
+            projectiles.splice(i, 1);
+          }
+        }
+      }
+      
       // Keyboard event listeners
       document.addEventListener('keydown', function(e) {
-        if (!isSpawned) return; // Don't move if not spawned
-        keys[e.key.toLowerCase()] = true;
+        if (!isSpawned) return; // Don't do anything if not spawned
+        
+        const key = e.key.toLowerCase();
+        
+        // Handle spacebar for firing
+        if (key === ' ' || key === 'space') {
+          createProjectile();
+          e.preventDefault();
+          return;
+        }
+        
+        keys[key] = true;
         
         // Only prevent default for movement keys
-        if (['w', 'a', 's', 'd', 'arrowup', 'arrowdown', 'arrowleft', 'arrowright'].includes(e.key.toLowerCase())) {
+        if (['w', 'a', 's', 'd', 'arrowup', 'arrowdown', 'arrowleft', 'arrowright'].includes(key)) {
           e.preventDefault();
         }
       });
@@ -219,12 +295,12 @@
             // Calculate precise rotation angle
             // Math.atan2 gives us angles from -180° to 180°
             // We convert so that "up" (negative Y) is 0°
-            const rotation = Math.atan2(normalizedDx, -normalizedDy) * (180 / Math.PI);
+            currentRotation = Math.atan2(normalizedDx, -normalizedDy) * (180 / Math.PI);
             
             // Update plane position and rotation with precise angle
             playerPlane.style.left = playerX + '%';
             playerPlane.style.top = playerY + '%';
-            playerPlane.style.transform = `translate(-50%, -50%) rotate(${rotation.toFixed(1)}deg)`;
+            playerPlane.style.transform = `translate(-50%, -50%) rotate(${currentRotation.toFixed(1)}deg)`;
             
             moved = true;
           }
@@ -240,6 +316,9 @@
           // W+A: -45° (or 315°)
           // And any combination creates precise intermediate angles
         }
+        
+        // Update projectiles
+        updateProjectiles();
         
         // Continue the game loop
         requestAnimationFrame(updatePlayerPosition);
