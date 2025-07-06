@@ -48,7 +48,7 @@
       box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
       display: none; /* Hidden by default */
       transform: translate(-50%, -50%);
-      transition: transform 0.3s ease;
+      transition: transform 0.1s ease;
     }
     .plane:nth-child(3) {
       width: 68px;
@@ -151,9 +151,9 @@
         playerPlane.style.bottom = 'auto'; // Override bottom positioning
         
         // Add spawn effect with slight scale animation
-        playerPlane.style.transform = 'translate(-50%, -50%) scale(0.8)';
+        playerPlane.style.transform = 'translate(-50%, -50%) rotate(0deg) scale(0.8)';
         setTimeout(() => {
-          playerPlane.style.transform = 'translate(-50%, -50%) scale(1)';
+          playerPlane.style.transform = 'translate(-50%, -50%) rotate(0deg) scale(1)';
         }, 100);
         
         isSpawned = true;
@@ -185,29 +185,43 @@
       function updatePlayerPosition() {
         if (isSpawned) {
           let moved = false;
+          let rotation = 0; // Default rotation (facing up)
+          let dx = 0, dy = 0; // Direction vectors
           
-          // Handle WASD movement
+          // Handle WASD movement and calculate direction
           if (keys['w'] || keys['arrowup']) {
-            playerY = Math.max(5, playerY - moveSpeed); // Don't go above 5%
+            playerY = Math.max(5, playerY - moveSpeed);
+            dy = -1;
             moved = true;
           }
           if (keys['s'] || keys['arrowdown']) {
-            playerY = Math.min(95, playerY + moveSpeed); // Don't go below 95%
+            playerY = Math.min(95, playerY + moveSpeed);
+            dy = 1;
             moved = true;
           }
           if (keys['a'] || keys['arrowleft']) {
-            playerX = Math.max(5, playerX - moveSpeed); // Don't go left of 5%
+            playerX = Math.max(5, playerX - moveSpeed);
+            dx = -1;
             moved = true;
           }
           if (keys['d'] || keys['arrowright']) {
-            playerX = Math.min(95, playerX + moveSpeed); // Don't go right of 95%
+            playerX = Math.min(95, playerX + moveSpeed);
+            dx = 1;
             moved = true;
           }
           
-          // Update plane position if moved
+          // Calculate rotation based on movement direction
           if (moved) {
+            if (dx !== 0 || dy !== 0) {
+              // Calculate angle in radians, then convert to degrees
+              // Math.atan2 gives angle from positive X axis, so we adjust for "up" being 0°
+              rotation = Math.atan2(dx, -dy) * (180 / Math.PI);
+            }
+            
+            // Update plane position and rotation
             playerPlane.style.left = playerX + '%';
             playerPlane.style.top = playerY + '%';
+            playerPlane.style.transform = `translate(-50%, -50%) rotate(${rotation}deg)`;
           }
         }
         
