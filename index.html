@@ -16,20 +16,39 @@
     image-rendering: pixelated;
     animation: flyUp linear infinite;
   }
+  
   @keyframes flyUp {
     to {
       bottom: 110%;
     }
   }
+  
+  .controls {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 15px;
+    border-radius: 8px;
+    font-family: monospace;
+    font-size: 14px;
+    z-index: 100;
+  }
   </style>
 </head>
 <body>
   <style>
-    /* Automatically detected plane sprites - positions and speeds set by JavaScript */
+    /* Player-controlled SU-33 */
     .plane:nth-child(2) {
-      width: 60px;
-      height: 92px;
-      background-position: -396px -188px;
+      width: 64px;
+      height: 111px;
+      background-position: -394px -708px; /* SU-33 sprite */
+      z-index: 10;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+      display: none; /* Hidden by default */
+      transform: translate(-50%, -50%);
+      transition: transform 0.3s ease;
     }
     .plane:nth-child(3) {
       width: 68px;
@@ -54,26 +73,39 @@
   </style>
 
   <div class="plane"></div>
+  <div class="plane" id="playerPlane"></div>
   <div class="plane"></div>
   <div class="plane"></div>
   <div class="plane"></div>
-  <div class="plane"></div>
+
+  <!-- Controls display -->
+  <div class="controls">
+    <strong>Controls:</strong><br>
+    Left Click - Spawn Jet<br>
+    W - Move Up<br>
+    A - Move Left<br>
+    S - Move Down<br>
+    D - Move Right
+  </div>
 
   <h1 style="position: relative; z-index: 1;">Hello from GitHub Pages!</h1>
   <p style="position: relative; z-index: 1;">This is my personal website.</p>
 
   <script>
-    // Randomize plane speeds and positions
     document.addEventListener('DOMContentLoaded', function() {
+      // Randomize NPC plane speeds and positions (excluding player plane)
       const planes = document.querySelectorAll('.plane');
       
       planes.forEach((plane, index) => {
+        // Skip plane 2 (index 1) as it's the player plane
+        if (plane.id === 'playerPlane') return;
+        
         // Random horizontal position (5% to 95%)
         const randomLeft = Math.random() * 90 + 5;
         plane.style.left = randomLeft + '%';
         
-        // Random speed (2 to 6 seconds)
-        const randomDuration = Math.random() * 4 + 2;
+        // Random speed (1.33 to 4 seconds) - 50% faster than before
+        const randomDuration = (Math.random() * 4 + 2) / 1.5;
         plane.style.animationDuration = randomDuration + 's';
         
         // Random delay (0 to 3 seconds)
@@ -84,6 +116,107 @@
         const randomStart = -(Math.random() * 150 + 150);
         plane.style.bottom = randomStart + 'px';
       });
+
+      // Player-controlled plane system
+      const playerPlane = document.getElementById('playerPlane');
+      let playerX = 50; // Position percentage
+      let playerY = 50; // Position percentage
+      const moveSpeed = 2; // Movement speed percentage per keypress
+      let isSpawned = false; // Track if plane is spawned
+      
+      // Track pressed keys for smooth movement
+      const keys = {};
+      
+      // Mouse left click to spawn plane (only once)
+      document.addEventListener('mousedown', function(e) {
+        // Only respond to left click (button 0)
+        if (e.button !== 0) return;
+        
+        // Don't spawn if already spawned or clicking on controls
+        if (isSpawned || e.target.closest('.controls')) return;
+        
+        // Calculate position as percentage
+        playerX = (e.clientX / window.innerWidth) * 100;
+        playerY = (e.clientY / window.innerHeight) * 100;
+        
+        // Disable the flyUp animation for player plane
+        playerPlane.style.animation = 'none';
+        
+        // Show the plane
+        playerPlane.style.display = 'block';
+        
+        // Position the plane
+        playerPlane.style.left = playerX + '%';
+        playerPlane.style.top = playerY + '%';
+        playerPlane.style.bottom = 'auto'; // Override bottom positioning
+        
+        // Add spawn effect with slight scale animation
+        playerPlane.style.transform = 'translate(-50%, -50%) scale(0.8)';
+        setTimeout(() => {
+          playerPlane.style.transform = 'translate(-50%, -50%) scale(1)';
+        }, 100);
+        
+        isSpawned = true;
+        
+        // Update controls text to show plane is spawned
+        const controlsDiv = document.querySelector('.controls');
+        controlsDiv.innerHTML = controlsDiv.innerHTML.replace('Left Click - Spawn Jet', 'Jet Spawned! ✓');
+        
+        // Prevent default behavior
+        e.preventDefault();
+      });
+      
+      // Keyboard event listeners
+      document.addEventListener('keydown', function(e) {
+        if (!isSpawned) return; // Don't move if not spawned
+        keys[e.key.toLowerCase()] = true;
+        
+        // Only prevent default for movement keys
+        if (['w', 'a', 's', 'd', 'arrowup', 'arrowdown', 'arrowleft', 'arrowright'].includes(e.key.toLowerCase())) {
+          e.preventDefault();
+        }
+      });
+      
+      document.addEventListener('keyup', function(e) {
+        keys[e.key.toLowerCase()] = false;
+      });
+      
+      // Game loop for smooth movement
+      function updatePlayerPosition() {
+        if (isSpawned) {
+          let moved = false;
+          
+          // Handle WASD movement
+          if (keys['w'] || keys['arrowup']) {
+            playerY = Math.max(5, playerY - moveSpeed); // Don't go above 5%
+            moved = true;
+          }
+          if (keys['s'] || keys['arrowdown']) {
+            playerY = Math.min(95, playerY + moveSpeed); // Don't go below 95%
+            moved = true;
+          }
+          if (keys['a'] || keys['arrowleft']) {
+            playerX = Math.max(5, playerX - moveSpeed); // Don't go left of 5%
+            moved = true;
+          }
+          if (keys['d'] || keys['arrowright']) {
+            playerX = Math.min(95, playerX + moveSpeed); // Don't go right of 95%
+            moved = true;
+          }
+          
+          // Update plane position if moved
+          if (moved) {
+            playerPlane.style.left = playerX + '%';
+            playerPlane.style.top = playerY + '%';
+          }
+        }
+        
+        // Continue the game loop
+        requestAnimationFrame(updatePlayerPosition);
+      }
+      
+      // Start the game loop
+      updatePlayerPosition();
     });
   </script>
 </body>
