@@ -38,11 +38,11 @@
   
   .projectile {
     position: absolute;
-    width: 4px;
-    height: 12px;
+    width: 6px;
+    height: 18px;
     background: linear-gradient(to bottom, #ff4444, #ff8800, #ffdd00);
-    border-radius: 2px;
-    box-shadow: 0 0 6px #ff6600, 0 0 12px rgba(255, 68, 68, 0.5);
+    border-radius: 3px;
+    box-shadow: 0 0 8px #ff6600, 0 0 16px rgba(255, 68, 68, 0.5);
     z-index: 5;
   }
   </style>
@@ -182,31 +182,34 @@
         e.preventDefault();
       });
       
-      // Projectile creation function - fires in bursts of 3
+      // Projectile creation function - fires 3 in a straight line
       function createProjectileBurst() {
         if (!isSpawned) return;
         
-        // Create 3 projectiles with slight spread
+        // Calculate direction based on current rotation
+        const radians = currentRotation * (Math.PI / 180);
+        const directionX = Math.sin(radians);
+        const directionY = -Math.cos(radians);
+        
+        // Create 3 projectiles in a straight line
         for (let i = 0; i < 3; i++) {
           const projectile = document.createElement('div');
           projectile.className = 'projectile';
           
-          // Position at player's location
-          projectile.style.left = playerX + '%';
-          projectile.style.top = playerY + '%';
+          // Position projectiles in a line along the direction vector
+          // Spread them 1.5% apart in the direction they're traveling
+          const lineOffset = (i - 1) * 1.5; // -1.5%, 0%, +1.5% spacing
+          const offsetX = playerX + (directionX * lineOffset);
+          const offsetY = playerY + (directionY * lineOffset);
           
-          // Calculate direction based on current rotation with spread
-          const spreadAngle = (i - 1) * 8; // -8°, 0°, +8° spread
-          const adjustedRotation = currentRotation + spreadAngle;
-          const radians = adjustedRotation * (Math.PI / 180);
-          const directionX = Math.sin(radians);
-          const directionY = -Math.cos(radians);
+          projectile.style.left = offsetX + '%';
+          projectile.style.top = offsetY + '%';
           
           // Store projectile data
           const projectileData = {
             element: projectile,
-            x: playerX,
-            y: playerY,
+            x: offsetX,
+            y: offsetY,
             directionX: directionX,
             directionY: directionY
           };
