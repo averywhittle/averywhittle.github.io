@@ -185,44 +185,60 @@
       function updatePlayerPosition() {
         if (isSpawned) {
           let moved = false;
-          let rotation = 0; // Default rotation (facing up)
-          let dx = 0, dy = 0; // Direction vectors
+          let dx = 0, dy = 0; // Direction vectors (can be fractional for smooth movement)
           
-          // Handle WASD movement and calculate direction
+          // Calculate movement vectors with precise directional control
           if (keys['w'] || keys['arrowup']) {
-            playerY = Math.max(5, playerY - moveSpeed);
-            dy = -1;
-            moved = true;
+            dy -= 1;
           }
           if (keys['s'] || keys['arrowdown']) {
-            playerY = Math.min(95, playerY + moveSpeed);
-            dy = 1;
-            moved = true;
+            dy += 1;
           }
           if (keys['a'] || keys['arrowleft']) {
-            playerX = Math.max(5, playerX - moveSpeed);
-            dx = -1;
-            moved = true;
+            dx -= 1;
           }
           if (keys['d'] || keys['arrowright']) {
-            playerX = Math.min(95, playerX + moveSpeed);
-            dx = 1;
+            dx += 1;
+          }
+          
+          // If moving, calculate precise movement and rotation
+          if (dx !== 0 || dy !== 0) {
+            // Normalize diagonal movement to prevent faster diagonal speed
+            const magnitude = Math.sqrt(dx * dx + dy * dy);
+            const normalizedDx = dx / magnitude;
+            const normalizedDy = dy / magnitude;
+            
+            // Apply normalized movement
+            const newX = playerX + (normalizedDx * moveSpeed);
+            const newY = playerY + (normalizedDy * moveSpeed);
+            
+            // Boundary checking
+            playerX = Math.max(5, Math.min(95, newX));
+            playerY = Math.max(5, Math.min(95, newY));
+            
+            // Calculate precise rotation angle
+            // Math.atan2 gives us angles from -180° to 180°
+            // We convert so that "up" (negative Y) is 0°
+            const rotation = Math.atan2(normalizedDx, -normalizedDy) * (180 / Math.PI);
+            
+            // Update plane position and rotation with precise angle
+            playerPlane.style.left = playerX + '%';
+            playerPlane.style.top = playerY + '%';
+            playerPlane.style.transform = `translate(-50%, -50%) rotate(${rotation.toFixed(1)}deg)`;
+            
             moved = true;
           }
           
-          // Calculate rotation based on movement direction
-          if (moved) {
-            if (dx !== 0 || dy !== 0) {
-              // Calculate angle in radians, then convert to degrees
-              // Math.atan2 gives angle from positive X axis, so we adjust for "up" being 0°
-              rotation = Math.atan2(dx, -dy) * (180 / Math.PI);
-            }
-            
-            // Update plane position and rotation
-            playerPlane.style.left = playerX + '%';
-            playerPlane.style.top = playerY + '%';
-            playerPlane.style.transform = `translate(-50%, -50%) rotate(${rotation}deg)`;
-          }
+          // Example angles that are now possible:
+          // W only: 0°
+          // W+D: 45°
+          // D only: 90°
+          // S+D: 135°
+          // S only: 180°
+          // S+A: -135° (or 225°)
+          // A only: -90° (or 270°)
+          // W+A: -45° (or 315°)
+          // And any combination creates precise intermediate angles
         }
         
         // Continue the game loop
