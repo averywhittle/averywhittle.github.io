@@ -38,11 +38,11 @@
   
   .projectile {
     position: absolute;
-    width: 3px;
-    height: 8px;
-    background: #ffff00;
+    width: 4px;
+    height: 12px;
+    background: linear-gradient(to bottom, #ff4444, #ff8800, #ffdd00);
     border-radius: 2px;
-    box-shadow: 0 0 4px #ffff00;
+    box-shadow: 0 0 6px #ff6600, 0 0 12px rgba(255, 68, 68, 0.5);
     z-index: 5;
   }
   </style>
@@ -182,33 +182,38 @@
         e.preventDefault();
       });
       
-      // Projectile creation function
-      function createProjectile() {
+      // Projectile creation function - fires in bursts of 3
+      function createProjectileBurst() {
         if (!isSpawned) return;
         
-        const projectile = document.createElement('div');
-        projectile.className = 'projectile';
-        
-        // Position at player's location
-        projectile.style.left = playerX + '%';
-        projectile.style.top = playerY + '%';
-        
-        // Calculate direction based on current rotation
-        const radians = currentRotation * (Math.PI / 180);
-        const directionX = Math.sin(radians);
-        const directionY = -Math.cos(radians);
-        
-        // Store projectile data
-        const projectileData = {
-          element: projectile,
-          x: playerX,
-          y: playerY,
-          directionX: directionX,
-          directionY: directionY
-        };
-        
-        projectiles.push(projectileData);
-        document.body.appendChild(projectile);
+        // Create 3 projectiles with slight spread
+        for (let i = 0; i < 3; i++) {
+          const projectile = document.createElement('div');
+          projectile.className = 'projectile';
+          
+          // Position at player's location
+          projectile.style.left = playerX + '%';
+          projectile.style.top = playerY + '%';
+          
+          // Calculate direction based on current rotation with spread
+          const spreadAngle = (i - 1) * 8; // -8°, 0°, +8° spread
+          const adjustedRotation = currentRotation + spreadAngle;
+          const radians = adjustedRotation * (Math.PI / 180);
+          const directionX = Math.sin(radians);
+          const directionY = -Math.cos(radians);
+          
+          // Store projectile data
+          const projectileData = {
+            element: projectile,
+            x: playerX,
+            y: playerY,
+            directionX: directionX,
+            directionY: directionY
+          };
+          
+          projectiles.push(projectileData);
+          document.body.appendChild(projectile);
+        }
       }
       
       // Update projectiles
@@ -238,9 +243,9 @@
         
         const key = e.key.toLowerCase();
         
-        // Handle spacebar for firing
+        // Handle spacebar for firing burst
         if (key === ' ' || key === 'space') {
-          createProjectile();
+          createProjectileBurst();
           e.preventDefault();
           return;
         }
