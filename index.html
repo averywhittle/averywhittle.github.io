@@ -144,13 +144,20 @@
       
       function initializeNPCPlanes() {
         const planes = document.querySelectorAll('.plane');
+        console.log('Found planes:', planes.length);
         
         planes.forEach((plane, index) => {
+          console.log(`Plane ${index + 1}: id=${plane.id}, element:`, plane);
+          
           // Skip plane 2 (index 1) as it's the player plane
-          if (plane.id === 'playerPlane') return;
+          if (plane.id === 'playerPlane') {
+            console.log('Skipping player plane');
+            return;
+          }
           
           // Initially hide all NPC planes
           plane.style.display = 'none';
+          console.log(`Hidden NPC plane ${index + 1}`);
           
           // Store plane data for later spawning
           const planeData = {
@@ -159,14 +166,20 @@
           };
           npcPlanes.push(planeData);
         });
+        
+        console.log('NPC planes initialized:', npcPlanes.length);
       }
       
       function startNPCPlanes() {
         if (npcPlanesStarted) return;
         npcPlanesStarted = true;
         
+        console.log('Starting NPC planes, count:', npcPlanes.length);
+        
         npcPlanes.forEach((planeData, index) => {
           const plane = planeData.element;
+          
+          console.log(`Starting plane ${index + 1}:`, plane);
           
           // Show the plane
           plane.style.display = 'block';
@@ -189,7 +202,11 @@
           
           // Set initial fire time with random offset
           planeData.lastFireTime = Date.now() + (Math.random() * 5500);
+          
+          console.log(`Plane ${index + 1} started - left: ${randomLeft}%, duration: ${randomDuration}s, delay: ${randomDelay}s, top: ${randomStart}px`);
         });
+        
+        console.log('All NPC planes started');
       }
       
       // Initialize NPC planes but don't start them yet
@@ -310,6 +327,8 @@
         }, 100);
         
         isSpawned = true;
+        
+        console.log('Player spawned at:', playerX, playerY);
         
         // Start NPC planes when player spawns
         startNPCPlanes();
