@@ -132,7 +132,7 @@
       const playerPlane = document.getElementById('playerPlane');
       let playerX = 50; // Position percentage
       let playerY = 50; // Position percentage
-      const moveSpeed = 2; // Movement speed percentage per keypress
+      const moveSpeed = 1.3; // Movement speed percentage per keypress (35% slower: 2 * 0.65 = 1.3)
       let isSpawned = false; // Track if plane is spawned
       let currentRotation = 0; // Track current plane rotation
       
@@ -205,13 +205,17 @@
           projectile.style.left = offsetX + '%';
           projectile.style.top = offsetY + '%';
           
+          // Rotate projectile to face the direction it's traveling
+          projectile.style.transform = `rotate(${currentRotation}deg)`;
+          
           // Store projectile data
           const projectileData = {
             element: projectile,
             x: offsetX,
             y: offsetY,
             directionX: directionX,
-            directionY: directionY
+            directionY: directionY,
+            rotation: currentRotation
           };
           
           projectiles.push(projectileData);
