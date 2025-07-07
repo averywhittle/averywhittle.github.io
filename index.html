@@ -11,15 +11,16 @@
   .plane {
     position: absolute;
     left: 0;
-    bottom: -150px;
+    top: -150px;
     background: url('images/planes_spritesheet.gif') no-repeat;
     image-rendering: pixelated;
-    animation: flyUp linear infinite;
+    animation: flyDown linear infinite;
+    transform: rotate(180deg); /* Point downwards */
   }
   
-  @keyframes flyUp {
+  @keyframes flyDown {
     to {
-      bottom: 110%;
+      top: 110%;
     }
   }
   
@@ -57,36 +58,41 @@
 </head>
 <body>
   <style>
-    /* Player-controlled SU-33 */
+    /* Player-controlled SU-33 - 75% smaller */
     .plane:nth-child(2) {
-      width: 64px;
-      height: 111px;
+      width: 16px;
+      height: 28px;
       background-position: -394px -708px; /* SU-33 sprite */
+      background-size: 400%; /* Scale sprite sheet to maintain detail */
       z-index: 10;
-      box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+      box-shadow: 0 0 3px rgba(255, 255, 255, 0.5);
       display: none; /* Hidden by default */
-      transform: translate(-50%, -50%);
+      transform: translate(-50%, -50%); /* No rotation for player */
       transition: transform 0.1s ease;
     }
     .plane:nth-child(3) {
-      width: 68px;
-      height: 100px;
+      width: 17px;
+      height: 25px;
       background-position: -392px -316px;
+      background-size: 400%;
     }
     .plane:nth-child(4) {
-      width: 92px;
-      height: 112px;
+      width: 23px;
+      height: 28px;
       background-position: -380px -456px;
+      background-size: 400%;
     }
     .plane:nth-child(5) {
-      width: 84px;
-      height: 112px;
+      width: 21px;
+      height: 28px;
       background-position: -384px -604px;
+      background-size: 400%;
     }
     .plane:nth-child(6) {
-      width: 60px;
-      height: 92px;
+      width: 15px;
+      height: 23px;
       background-position: -512px -188px;
+      background-size: 400%;
     }
   </style>
 
@@ -126,29 +132,62 @@
 
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-      // Randomize NPC plane speeds and positions (excluding player plane)
-      const planes = document.querySelectorAll('.plane');
+      // NPC plane data and management
+      const npcPlanes = [];
+      let npcPlanesStarted = false;
       
-      planes.forEach((plane, index) => {
-        // Skip plane 2 (index 1) as it's the player plane
-        if (plane.id === 'playerPlane') return;
+      function initializeNPCPlanes() {
+        const planes = document.querySelectorAll('.plane');
         
-        // Random horizontal position (5% to 95%)
-        const randomLeft = Math.random() * 90 + 5;
-        plane.style.left = randomLeft + '%';
+        planes.forEach((plane, index) => {
+          // Skip plane 2 (index 1) as it's the player plane
+          if (plane.id === 'playerPlane') return;
+          
+          // Initially hide all NPC planes
+          plane.style.display = 'none';
+          
+          // Store plane data for later spawning
+          const planeData = {
+            element: plane,
+            lastFireTime: 0 // Track when this plane last fired
+          };
+          npcPlanes.push(planeData);
+        });
+      }
+      
+      function startNPCPlanes() {
+        if (npcPlanesStarted) return;
+        npcPlanesStarted = true;
         
-        // Random speed (1.33 to 4 seconds) - 50% faster than before
-        const randomDuration = (Math.random() * 4 + 2) / 1.5;
-        plane.style.animationDuration = randomDuration + 's';
-        
-        // Random delay (0 to 3 seconds)
-        const randomDelay = Math.random() * 3;
-        plane.style.animationDelay = randomDelay + 's';
-        
-        // Random starting position offset (-150 to -300px)
-        const randomStart = -(Math.random() * 150 + 150);
-        plane.style.bottom = randomStart + 'px';
-      });
+        npcPlanes.forEach((planeData, index) => {
+          const plane = planeData.element;
+          
+          // Show the plane
+          plane.style.display = 'block';
+          
+          // Random horizontal position (5% to 95%)
+          const randomLeft = Math.random() * 90 + 5;
+          plane.style.left = randomLeft + '%';
+          
+          // Random speed (1.33 to 4 seconds) - 50% faster than before
+          const randomDuration = (Math.random() * 4 + 2) / 1.5;
+          plane.style.animationDuration = randomDuration + 's';
+          
+          // Random delay (0 to 3 seconds)
+          const randomDelay = Math.random() * 3;
+          plane.style.animationDelay = randomDelay + 's';
+          
+          // Random starting position offset (-150 to -300px)
+          const randomStart = -(Math.random() * 150 + 150);
+          plane.style.top = randomStart + 'px';
+          
+          // Set initial fire time with random offset
+          planeData.lastFireTime = Date.now() + (Math.random() * 5500);
+        });
+      }
+      
+      // Initialize NPC planes but don't start them yet
+      initializeNPCPlanes();
 
       // Cloud movement system
       const clouds = document.querySelectorAll('.cloud');
@@ -227,6 +266,7 @@
       
       // Projectile system
       const projectiles = [];
+      const npcProjectiles = []; // Track NPC projectiles separately
       const projectileSpeed = 4; // Speed of projectiles
       
       // Track pressed keys for smooth movement
@@ -262,6 +302,9 @@
         }, 100);
         
         isSpawned = true;
+        
+        // Start NPC planes when player spawns
+        startNPCPlanes();
         
         // Update controls text to show plane is spawned
         const controlsDiv = document.querySelector('.controls');
@@ -312,8 +355,36 @@
         }
       }
       
+      // NPC projectile creation function
+      function createNPCProjectile(npcPlane) {
+        const rect = npcPlane.getBoundingClientRect();
+        const x = (rect.left + rect.width / 2) / window.innerWidth * 100;
+        const y = (rect.top + rect.height / 2) / window.innerHeight * 100;
+        
+        const projectile = document.createElement('div');
+        projectile.className = 'projectile';
+        projectile.style.left = x + '%';
+        projectile.style.top = y + '%';
+        projectile.style.background = 'linear-gradient(to bottom, #ff6666, #ff3333, #cc0000)'; // Red gradient for NPC
+        projectile.style.transform = 'translate(-50%, -50%) rotate(180deg)'; // Point downward
+        
+        const projectileData = {
+          element: projectile,
+          x: x,
+          y: y,
+          directionX: 0,
+          directionY: 1, // Move downward
+          rotation: 180,
+          isNPC: true
+        };
+        
+        npcProjectiles.push(projectileData);
+        document.body.appendChild(projectile);
+      }
+      
       // Update projectiles
       function updateProjectiles() {
+        // Update player projectiles
         for (let i = projectiles.length - 1; i >= 0; i--) {
           const proj = projectiles[i];
           
@@ -332,6 +403,42 @@
             projectiles.splice(i, 1);
           }
         }
+        
+        // Update NPC projectiles
+        for (let i = npcProjectiles.length - 1; i >= 0; i--) {
+          const proj = npcProjectiles[i];
+          
+          // Move projectile downward
+          proj.y += projectileSpeed;
+          
+          // Update position
+          proj.element.style.top = proj.y + '%';
+          
+          // Remove if off screen
+          if (proj.y > 105) {
+            proj.element.remove();
+            npcProjectiles.splice(i, 1);
+          }
+        }
+      }
+      
+      // NPC firing system
+      function updateNPCFiring() {
+        if (!npcPlanesStarted) return;
+        
+        const currentTime = Date.now();
+        
+        npcPlanes.forEach(planeData => {
+          // Check if 5.5 seconds have passed since last fire
+          if (currentTime - planeData.lastFireTime >= 5500) {
+            // Check if plane is visible on screen
+            const rect = planeData.element.getBoundingClientRect();
+            if (rect.top > -50 && rect.top < window.innerHeight + 50) {
+              createNPCProjectile(planeData.element);
+              planeData.lastFireTime = currentTime;
+            }
+          }
+        });
       }
       
       // Keyboard event listeners
@@ -421,6 +528,9 @@
         
         // Update projectiles
         updateProjectiles();
+        
+        // Update NPC firing
+        updateNPCFiring();
         
         // Continue the game loop
         requestAnimationFrame(updatePlayerPosition);
