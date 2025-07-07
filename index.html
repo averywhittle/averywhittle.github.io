@@ -15,7 +15,7 @@
     background: url('images/planes_spritesheet.gif') no-repeat;
     image-rendering: pixelated;
     animation: flyDown linear infinite;
-    transform: rotate(180deg); /* Point downwards */
+    /* Rotation will be handled by individual plane styles */
   }
   
   @keyframes flyDown {
@@ -69,30 +69,36 @@
       display: none; /* Hidden by default */
       transform: translate(-50%, -50%); /* No rotation for player */
       transition: transform 0.1s ease;
+      animation: none; /* Override flyDown animation for player */
+      position: fixed; /* Use fixed positioning for player control */
     }
     .plane:nth-child(3) {
       width: 17px;
       height: 25px;
       background-position: -392px -316px;
       background-size: 400%;
+      transform: rotate(180deg); /* Override base rotation for NPC planes */
     }
     .plane:nth-child(4) {
       width: 23px;
       height: 28px;
       background-position: -380px -456px;
       background-size: 400%;
+      transform: rotate(180deg); /* Override base rotation for NPC planes */
     }
     .plane:nth-child(5) {
       width: 21px;
       height: 28px;
       background-position: -384px -604px;
       background-size: 400%;
+      transform: rotate(180deg); /* Override base rotation for NPC planes */
     }
     .plane:nth-child(6) {
       width: 15px;
       height: 23px;
       background-position: -512px -188px;
       background-size: 400%;
+      transform: rotate(180deg); /* Override base rotation for NPC planes */
     }
   </style>
 
@@ -268,6 +274,8 @@
       const projectiles = [];
       const npcProjectiles = []; // Track NPC projectiles separately
       const projectileSpeed = 4; // Speed of projectiles
+      let lastPlayerFireTime = 0; // Track player firing cooldown
+      const playerFireCooldown = 20; // 20ms cooldown between shots
       
       // Track pressed keys for smooth movement
       const keys = {};
@@ -317,6 +325,11 @@
       // Projectile creation function - fires 3 in a straight line
       function createProjectileBurst() {
         if (!isSpawned) return;
+        
+        // Check cooldown
+        const currentTime = Date.now();
+        if (currentTime - lastPlayerFireTime < playerFireCooldown) return;
+        lastPlayerFireTime = currentTime;
         
         // Calculate direction based on current rotation
         const radians = currentRotation * (Math.PI / 180);
