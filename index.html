@@ -46,6 +46,46 @@
     z-index: 5;
     transform-origin: center center;
   }
+  
+  .cloud {
+    position: absolute;
+    background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.4));
+    border-radius: 50%;
+    opacity: 0.7;
+    z-index: 15; /* Above jets (z-index: 10) */
+    animation: floatCloud linear infinite;
+  }
+  
+  .cloud::before {
+    content: '';
+    position: absolute;
+    width: 80%;
+    height: 80%;
+    background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.4));
+    border-radius: 50%;
+    top: -30%;
+    left: -20%;
+  }
+  
+  .cloud::after {
+    content: '';
+    position: absolute;
+    width: 70%;
+    height: 70%;
+    background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.4));
+    border-radius: 50%;
+    bottom: -20%;
+    right: -15%;
+  }
+  
+  @keyframes floatCloud {
+    from {
+      left: -30%;
+    }
+    to {
+      left: 130%;
+    }
+  }
   </style>
 </head>
 <body>
@@ -89,6 +129,13 @@
   <div class="plane"></div>
   <div class="plane"></div>
 
+  <!-- Clouds that float above the jets -->
+  <div class="cloud" style="width: 120px; height: 60px; top: 10%;"></div>
+  <div class="cloud" style="width: 150px; height: 70px; top: 25%;"></div>
+  <div class="cloud" style="width: 100px; height: 50px; top: 40%;"></div>
+  <div class="cloud" style="width: 130px; height: 65px; top: 60%;"></div>
+  <div class="cloud" style="width: 110px; height: 55px; top: 75%;"></div>
+
   <!-- Controls display -->
   <div class="controls">
     <strong>Controls:</strong><br>
@@ -127,6 +174,21 @@
         // Random starting position offset (-150 to -300px)
         const randomStart = -(Math.random() * 150 + 150);
         plane.style.bottom = randomStart + 'px';
+      });
+
+      // Randomize cloud speeds and delays
+      const clouds = document.querySelectorAll('.cloud');
+      clouds.forEach((cloud, index) => {
+        // Random speed (15 to 30 seconds)
+        const cloudDuration = Math.random() * 15 + 15;
+        cloud.style.animationDuration = cloudDuration + 's';
+        
+        // Random delay to stagger cloud positions
+        const cloudDelay = Math.random() * cloudDuration;
+        cloud.style.animationDelay = cloudDelay + 's';
+        
+        // Random opacity (0.5 to 0.8)
+        cloud.style.opacity = Math.random() * 0.3 + 0.5;
       });
 
       // Player-controlled plane system
