@@ -49,42 +49,9 @@
   
   .cloud {
     position: absolute;
-    background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.4));
-    border-radius: 50%;
-    opacity: 0.7;
     z-index: 15; /* Above jets (z-index: 10) */
-    animation: floatCloud linear infinite;
-  }
-  
-  .cloud::before {
-    content: '';
-    position: absolute;
-    width: 80%;
-    height: 80%;
-    background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.4));
-    border-radius: 50%;
-    top: -30%;
-    left: -20%;
-  }
-  
-  .cloud::after {
-    content: '';
-    position: absolute;
-    width: 70%;
-    height: 70%;
-    background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.4));
-    border-radius: 50%;
-    bottom: -20%;
-    right: -15%;
-  }
-  
-  @keyframes floatCloud {
-    from {
-      left: -30%;
-    }
-    to {
-      left: 130%;
-    }
+    image-rendering: auto; /* Smooth rendering for clouds */
+    opacity: 0.8;
   }
   </style>
 </head>
@@ -129,12 +96,12 @@
   <div class="plane"></div>
   <div class="plane"></div>
 
-  <!-- Clouds that float above the jets -->
-  <div class="cloud" style="width: 120px; height: 60px; top: 10%;"></div>
-  <div class="cloud" style="width: 150px; height: 70px; top: 25%;"></div>
-  <div class="cloud" style="width: 100px; height: 50px; top: 40%;"></div>
-  <div class="cloud" style="width: 130px; height: 65px; top: 60%;"></div>
-  <div class="cloud" style="width: 110px; height: 55px; top: 75%;"></div>
+  <!-- Cloud sprites that float above the jets -->
+  <img class="cloud" src="images/clouds/cloud1.png" style="width: 120px; height: 60px; top: 10%;">
+  <img class="cloud" src="images/clouds/cloud2.png" style="width: 150px; height: 70px; top: 25%;">
+  <img class="cloud" src="images/clouds/cloud3.png" style="width: 100px; height: 50px; top: 40%;">
+  <img class="cloud" src="images/clouds/cloud4.png" style="width: 130px; height: 65px; top: 60%;">
+  <img class="cloud" src="images/clouds/cloud5.png" style="width: 110px; height: 55px; top: 75%;">
 
   <!-- Controls display -->
   <div class="controls">
@@ -176,20 +143,67 @@
         plane.style.bottom = randomStart + 'px';
       });
 
-      // Randomize cloud speeds and delays
+      // Cloud movement system
       const clouds = document.querySelectorAll('.cloud');
+      const cloudData = [];
+      
       clouds.forEach((cloud, index) => {
-        // Random speed (15 to 30 seconds)
-        const cloudDuration = Math.random() * 15 + 15;
-        cloud.style.animationDuration = cloudDuration + 's';
+        // Random initial position
+        const initialX = Math.random() * 100;
+        cloud.style.left = initialX + '%';
         
-        // Random delay to stagger cloud positions
-        const cloudDelay = Math.random() * cloudDuration;
-        cloud.style.animationDelay = cloudDelay + 's';
+        // Random speed between 1-7 pixels per second
+        const pixelsPerSecond = Math.random() * 6 + 1;
         
-        // Random opacity (0.5 to 0.8)
-        cloud.style.opacity = Math.random() * 0.3 + 0.5;
+        // Random direction (1 or -1)
+        const direction = Math.random() > 0.5 ? 1 : -1;
+        
+        // Random opacity (0.6 to 0.9)
+        cloud.style.opacity = Math.random() * 0.3 + 0.6;
+        
+        // Store cloud data
+        cloudData.push({
+          element: cloud,
+          x: initialX,
+          speed: pixelsPerSecond,
+          direction: direction
+        });
       });
+      
+      // Update clouds position
+      let lastTime = Date.now();
+      
+      function updateClouds() {
+        const currentTime = Date.now();
+        const deltaTime = (currentTime - lastTime) / 1000; // Convert to seconds
+        lastTime = currentTime;
+        
+        cloudData.forEach(cloud => {
+          // Calculate movement in pixels
+          const pixelMovement = cloud.speed * deltaTime;
+          // Convert to percentage (assuming 1920px width as reference)
+          const percentageMovement = (pixelMovement / window.innerWidth) * 100;
+          
+          // Update position
+          cloud.x += percentageMovement * cloud.direction;
+          
+          // Bounce off edges
+          if (cloud.x > 100 && cloud.direction > 0) {
+            cloud.direction = -1;
+            cloud.x = 100;
+          } else if (cloud.x < -15 && cloud.direction < 0) {
+            cloud.direction = 1;
+            cloud.x = -15;
+          }
+          
+          // Apply position
+          cloud.element.style.left = cloud.x + '%';
+        });
+        
+        requestAnimationFrame(updateClouds);
+      }
+      
+      updateClouds();
 
       // Player-controlled plane system
       const playerPlane = document.getElementById('playerPlane');
