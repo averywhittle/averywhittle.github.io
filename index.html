@@ -51,7 +51,7 @@
     position: absolute;
     z-index: 15; /* Above jets (z-index: 10) */
     image-rendering: auto; /* Smooth rendering for clouds */
-    opacity: 0.8;
+    opacity: 0.95; /* Increased opacity */
   }
   </style>
 </head>
@@ -96,12 +96,19 @@
   <div class="plane"></div>
   <div class="plane"></div>
 
-  <!-- Cloud sprites that float above the jets -->
-  <img class="cloud" src="images/clouds/cloud1.png" style="width: 120px; height: 60px; top: 10%;">
-  <img class="cloud" src="images/clouds/cloud2.png" style="width: 150px; height: 70px; top: 25%;">
-  <img class="cloud" src="images/clouds/cloud3.png" style="width: 100px; height: 50px; top: 40%;">
-  <img class="cloud" src="images/clouds/cloud4.png" style="width: 130px; height: 65px; top: 60%;">
-  <img class="cloud" src="images/clouds/cloud5.png" style="width: 110px; height: 55px; top: 75%;">
+  <!-- Cloud sprites that float above the jets (12 clouds) -->
+  <img class="cloud" src="images/clouds/cloud1.png" style="width: 120px; height: 60px; top: 5%;">
+  <img class="cloud" src="images/clouds/cloud2.png" style="width: 150px; height: 70px; top: 15%;">
+  <img class="cloud" src="images/clouds/cloud3.png" style="width: 100px; height: 50px; top: 25%;">
+  <img class="cloud" src="images/clouds/cloud4.png" style="width: 130px; height: 65px; top: 35%;">
+  <img class="cloud" src="images/clouds/cloud5.png" style="width: 110px; height: 55px; top: 45%;">
+  <img class="cloud" src="images/clouds/cloud1.png" style="width: 140px; height: 70px; top: 55%;">
+  <img class="cloud" src="images/clouds/cloud2.png" style="width: 100px; height: 50px; top: 65%;">
+  <img class="cloud" src="images/clouds/cloud3.png" style="width: 120px; height: 60px; top: 75%;">
+  <img class="cloud" src="images/clouds/cloud4.png" style="width: 110px; height: 55px; top: 85%;">
+  <img class="cloud" src="images/clouds/cloud5.png" style="width: 130px; height: 65px; top: 20%;">
+  <img class="cloud" src="images/clouds/cloud1.png" style="width: 90px; height: 45px; top: 50%;">
+  <img class="cloud" src="images/clouds/cloud3.png" style="width: 160px; height: 80px; top: 70%;">
 
   <!-- Controls display -->
   <div class="controls">
@@ -147,6 +154,8 @@
       const clouds = document.querySelectorAll('.cloud');
       const cloudData = [];
       
+      console.log(`Found ${clouds.length} clouds to animate`);
+      
       clouds.forEach((cloud, index) => {
         // Random initial position
         const initialX = Math.random() * 100;
@@ -158,8 +167,9 @@
         // Random direction (1 or -1)
         const direction = Math.random() > 0.5 ? 1 : -1;
         
-        // Random opacity (0.6 to 0.9)
-        cloud.style.opacity = Math.random() * 0.3 + 0.6;
+        // Higher opacity (0.8 to 1.0)
+        const opacity = Math.random() * 0.2 + 0.8;
+        cloud.style.opacity = opacity;
         
         // Store cloud data
         cloudData.push({
@@ -168,6 +178,8 @@
           speed: pixelsPerSecond,
           direction: direction
         });
+        
+        console.log(`Cloud ${index + 1}: speed=${pixelsPerSecond.toFixed(1)}px/s, direction=${direction > 0 ? 'right' : 'left'}, opacity=${opacity.toFixed(2)}`);
       });
       
       // Update clouds position
