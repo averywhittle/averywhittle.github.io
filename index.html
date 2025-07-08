@@ -126,6 +126,7 @@
   <div class="controls">
     <strong>Controls:</strong><br>
     Left Click - Spawn Jet<br>
+    Right Click - Toggle Planes<br>
     W - Move Up<br>
     A - Move Left<br>
     S - Move Down<br>
@@ -141,6 +142,7 @@
       // NPC plane data and management
       const npcPlanes = [];
       let npcPlanesStarted = false;
+      let planesVisible = true; // Track visibility state
       
       function initializeNPCPlanes() {
         const planes = document.querySelectorAll('.plane');
@@ -181,8 +183,8 @@
           
           console.log(`Starting plane ${index + 1}:`, plane);
           
-          // Show the plane
-          plane.style.display = 'block';
+          // Show the plane (only if planes are visible)
+          plane.style.display = planesVisible ? 'block' : 'none';
           
           // Random horizontal position (5% to 95%)
           const randomLeft = Math.random() * 90 + 5;
@@ -207,6 +209,69 @@
         });
         
         console.log('All NPC planes started');
+      }
+      
+      // Plane visibility toggle system
+      function togglePlaneVisibility() {
+        planesVisible = !planesVisible;
+        console.log('Toggling planes visibility to:', planesVisible);
+        
+        // Toggle player plane
+        const playerPlane = document.getElementById('playerPlane');
+        if (playerPlane) {
+          playerPlane.style.display = planesVisible && isSpawned ? 'block' : 'none';
+        }
+        
+        // Toggle NPC planes
+        npcPlanes.forEach((planeData, index) => {
+          const shouldShow = planesVisible && npcPlanesStarted;
+          planeData.element.style.display = shouldShow ? 'block' : 'none';
+          console.log(`NPC Plane ${index + 1} display:`, shouldShow ? 'block' : 'none');
+        });
+        
+        // Update controls display
+        const controlsDiv = document.querySelector('.controls');
+        const statusText = planesVisible ? 'Planes Visible' : 'Planes Hidden';
+        controlsDiv.innerHTML = controlsDiv.innerHTML.replace(/Planes (Visible|Hidden)/, statusText);
+        if (!controlsDiv.innerHTML.includes('Planes')) {
+          controlsDiv.innerHTML = controlsDiv.innerHTML.replace('Right Click - Toggle Planes', `Right Click - Toggle Planes (${statusText})`);
+        }
+      }
+      
+      function showAllPlanes() {
+        console.log('Showing all planes');
+        planesVisible = true;
+        
+        // Show player plane if spawned
+        const playerPlane = document.getElementById('playerPlane');
+        if (playerPlane && isSpawned) {
+          playerPlane.style.display = 'block';
+        }
+        
+        // Show NPC planes if started
+        npcPlanes.forEach((planeData, index) => {
+          if (npcPlanesStarted) {
+            planeData.element.style.display = 'block';
+            console.log(`Showed NPC Plane ${index + 1}`);
+          }
+        });
+      }
+      
+      function hideAllPlanes() {
+        console.log('Hiding all planes');
+        planesVisible = false;
+        
+        // Hide player plane
+        const playerPlane = document.getElementById('playerPlane');
+        if (playerPlane) {
+          playerPlane.style.display = 'none';
+        }
+        
+        // Hide NPC planes
+        npcPlanes.forEach((planeData, index) => {
+          planeData.element.style.display = 'none';
+          console.log(`Hidden NPC Plane ${index + 1}`);
+        });
       }
       
       // Initialize NPC planes but don't start them yet
@@ -297,9 +362,15 @@
       // Track pressed keys for smooth movement
       const keys = {};
       
-      // Mouse left click to spawn plane (only once)
+      // Mouse click handlers
       document.addEventListener('mousedown', function(e) {
-        // Only respond to left click (button 0)
+        // Prevent context menu on right click
+        if (e.button === 2) {
+          e.preventDefault();
+          return;
+        }
+        
+        // Only respond to left click (button 0) for spawning
         if (e.button !== 0) return;
         
         // Don't spawn if already spawned or clicking on controls
@@ -312,8 +383,8 @@
         // Disable the flyUp animation for player plane
         playerPlane.style.animation = 'none';
         
-        // Show the plane
-        playerPlane.style.display = 'block';
+        // Show the plane (only if planes are visible)
+        playerPlane.style.display = planesVisible ? 'block' : 'none';
         
         // Position the plane
         playerPlane.style.left = playerX + '%';
@@ -339,6 +410,12 @@
         
         // Prevent default behavior
         e.preventDefault();
+      });
+      
+      // Right click to toggle plane visibility
+      document.addEventListener('contextmenu', function(e) {
+        e.preventDefault(); // Prevent context menu
+        togglePlaneVisibility();
       });
       
       // Projectile creation function - fires 3 in a straight line
