@@ -404,6 +404,9 @@
         // Start NPC planes when player spawns
         startNPCPlanes();
         
+        // Force show all planes immediately
+        showAllPlanes();
+        
         // Update controls text to show plane is spawned
         const controlsDiv = document.querySelector('.controls');
         controlsDiv.innerHTML = controlsDiv.innerHTML.replace('Left Click - Spawn Jet', 'Jet Spawned! ✓');
