@@ -15,7 +15,7 @@
     background: url('images/planes_spritesheet.gif') no-repeat;
     image-rendering: pixelated;
     animation: flyDown linear infinite;
-    /* Rotation will be handled by individual plane styles */
+    transform: rotate(180deg); /* Point downwards */
   }
   
   @keyframes flyDown {
@@ -57,6 +57,7 @@
   </style>
 </head>
 <body>
+  <!-- Player plane styles -->
   <style>
     /* Player-controlled SU-33 - 75% smaller */
     .plane:nth-child(2) {
@@ -133,8 +134,6 @@
     Space - Fire Projectile
   </div>
 
-  <h1 style="position: relative; z-index: 1;">Hello from GitHub Pages!</h1>
-  <p style="position: relative; z-index: 1;">This is my personal website.</p>
 
   <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -144,20 +143,16 @@
       
       function initializeNPCPlanes() {
         const planes = document.querySelectorAll('.plane');
-        console.log('Found planes:', planes.length);
         
         planes.forEach((plane, index) => {
-          console.log(`Plane ${index + 1}: id=${plane.id}, element:`, plane);
           
           // Skip plane 2 (index 1) as it's the player plane
           if (plane.id === 'playerPlane') {
-            console.log('Skipping player plane');
             return;
           }
           
           // Initially hide all NPC planes
           plane.style.display = 'none';
-          console.log(`Hidden NPC plane ${index + 1}`);
           
           // Store plane data for later spawning
           const planeData = {
@@ -167,19 +162,16 @@
           npcPlanes.push(planeData);
         });
         
-        console.log('NPC planes initialized:', npcPlanes.length);
       }
       
       function startNPCPlanes() {
         if (npcPlanesStarted) return;
         npcPlanesStarted = true;
         
-        console.log('Starting NPC planes, count:', npcPlanes.length);
         
         npcPlanes.forEach((planeData, index) => {
           const plane = planeData.element;
           
-          console.log(`Starting plane ${index + 1}:`, plane);
           
           // Show the plane
           plane.style.display = 'block';
@@ -203,12 +195,9 @@
           // Set initial fire time with random offset
           planeData.lastFireTime = Date.now() + (Math.random() * 5500);
           
-          console.log(`Plane ${index + 1} started - left: ${randomLeft}%, duration: ${randomDuration}s, delay: ${randomDelay}s, top: ${randomStart}px`);
         });
         
-        console.log('All NPC planes started');
       }
-      
       
       // Initialize NPC planes but don't start them yet
       initializeNPCPlanes();
@@ -217,7 +206,6 @@
       const clouds = document.querySelectorAll('.cloud');
       const cloudData = [];
       
-      console.log(`Found ${clouds.length} clouds to animate`);
       
       clouds.forEach((cloud, index) => {
         // Random initial position
@@ -242,7 +230,6 @@
           direction: direction
         });
         
-        console.log(`Cloud ${index + 1}: speed=${pixelsPerSecond.toFixed(1)}px/s, direction=${direction > 0 ? 'right' : 'left'}, opacity=${opacity.toFixed(2)}`);
       });
       
       // Update clouds position
@@ -284,7 +271,7 @@
       const playerPlane = document.getElementById('playerPlane');
       let playerX = 50; // Position percentage
       let playerY = 50; // Position percentage
-      const moveSpeed = 1; // Movement speed percentage per keypress (50% slower: 2 * 0.5 = 1)
+      const moveSpeed = 1; // Movement speed percentage per frame
       let isSpawned = false; // Track if plane is spawned
       let currentRotation = 0; // Track current plane rotation
       
@@ -319,7 +306,6 @@
         // Position the plane
         playerPlane.style.left = playerX + '%';
         playerPlane.style.top = playerY + '%';
-        playerPlane.style.bottom = 'auto'; // Override bottom positioning
         
         // Add spawn effect with slight scale animation
         playerPlane.style.transform = 'translate(-50%, -50%) rotate(0deg) scale(0.8)';
@@ -329,7 +315,6 @@
         
         isSpawned = true;
         
-        console.log('Player spawned at:', playerX, playerY);
         
         // Start NPC planes when player spawns
         startNPCPlanes();
@@ -409,8 +394,7 @@
           y: y,
           directionX: 0,
           directionY: 1, // Move downward
-          rotation: 180,
-          isNPC: true
+          rotation: 180
         };
         
         npcProjectiles.push(projectileData);
@@ -504,7 +488,6 @@
       // Game loop for smooth movement
       function updatePlayerPosition() {
         if (isSpawned) {
-          let moved = false;
           let dx = 0, dy = 0; // Direction vectors (can be fractional for smooth movement)
           
           // Calculate movement vectors with precise directional control
@@ -545,20 +528,7 @@
             playerPlane.style.left = playerX + '%';
             playerPlane.style.top = playerY + '%';
             playerPlane.style.transform = `translate(-50%, -50%) rotate(${currentRotation.toFixed(1)}deg)`;
-            
-            moved = true;
           }
-          
-          // Example angles that are now possible:
-          // W only: 0°
-          // W+D: 45°
-          // D only: 90°
-          // S+D: 135°
-          // S only: 180°
-          // S+A: -135° (or 225°)
-          // A only: -90° (or 270°)
-          // W+A: -45° (or 315°)
-          // And any combination creates precise intermediate angles
         }
         
         // Update projectiles
