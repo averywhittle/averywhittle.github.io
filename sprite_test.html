@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Sprite Sheet Test</title>
+  <style>
+    body {
+      margin: 20px;
+      background: #f0f0f0;
+    }
+    .sprite-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 20px;
+      margin: 20px 0;
+    }
+    .sprite {
+      width: 64px;
+      height: 64px;
+      background: url('images/planes_spritesheet.gif') no-repeat;
+      border: 2px solid black;
+      image-rendering: pixelated;
+    }
+    .full-sheet {
+      background: url('images/planes_spritesheet.gif');
+      width: 512px;
+      height: 832px;
+      border: 2px solid red;
+      margin: 20px 0;
+      image-rendering: pixelated;
+    }
+  </style>
+</head>
+<body>
+  <h1>Sprite Sheet Debug</h1>
+  
+  <h2>Full Sprite Sheet</h2>
+  <div class="full-sheet"></div>
+  
+  <h2>Individual Sprites (Current Positions)</h2>
+  <div class="sprite-grid">
+    <div class="sprite" style="background-position: -392px -188px;" title="Plane 1: -392px -188px"></div>
+    <div class="sprite" style="background-position: -394px -708px;" title="Player SU-33: -394px -708px"></div>
+    <div class="sprite" style="background-position: -392px -316px;" title="Plane 3: -392px -316px"></div>
+    <div class="sprite" style="background-position: -380px -456px;" title="Plane 4: -380px -456px"></div>
+    <div class="sprite" style="background-position: -384px -604px;" title="Plane 5: -384px -604px"></div>
+  </div>
+  
+  <h2>Test Common Positions</h2>
+  <div class="sprite-grid">
+    <div class="sprite" style="background-position: 0px 0px;" title="0, 0"></div>
+    <div class="sprite" style="background-position: -64px 0px;" title="-64, 0"></div>
+    <div class="sprite" style="background-position: -128px 0px;" title="-128, 0"></div>
+    <div class="sprite" style="background-position: -192px 0px;" title="-192, 0"></div>
+    <div class="sprite" style="background-position: -256px 0px;" title="-256, 0"></div>
+  </div>
+  
+  <div class="sprite-grid">
+    <div class="sprite" style="background-position: 0px -64px;" title="0, -64"></div>
+    <div class="sprite" style="background-position: -64px -64px;" title="-64, -64"></div>
+    <div class="sprite" style="background-position: -128px -64px;" title="-128, -64"></div>
+    <div class="sprite" style="background-position: -192px -64px;" title="-192, -64"></div>
+    <div class="sprite" style="background-position: -256px -64px;" title="-256, -64"></div>
+  </div>
+
+  <script>
+    // Test if sprite sheet loads
+    const img = new Image();
+    img.onload = function() {
+      console.log('✅ Sprite sheet loaded successfully!');
+      console.log('Dimensions:', img.width, 'x', img.height);
+    };
+    img.onerror = function() {
+      console.error('❌ Failed to load sprite sheet');
+    };
+    img.src = 'images/planes_spritesheet.gif';
+  </script>
+</body>
+</html>

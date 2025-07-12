@@ -57,17 +57,17 @@
   
   /* First NPC plane */
   .plane:nth-child(1) {
-    width: 20px;
-    height: 26px;
-    background-position: -392px -188px;
-    background-size: 400%;
+    width: 64px;
+    height: 64px;
+    background-position: 0px 0px;
+    background-size: auto;
   }
-  /* Player-controlled SU-33 - 75% smaller */
+  /* Player-controlled plane */
   .plane:nth-child(2) {
-    width: 16px;
-    height: 28px;
-    background-position: -394px -708px; /* SU-33 sprite */
-    background-size: 400%; /* Scale sprite sheet to maintain detail */
+    width: 64px;
+    height: 64px;
+    background-position: -64px 0px;
+    background-size: auto;
     z-index: 10;
     box-shadow: 0 0 3px rgba(255, 255, 255, 0.5);
     display: none; /* Hidden by default */
@@ -77,22 +77,22 @@
     position: fixed; /* Use fixed positioning for player control */
   }
   .plane:nth-child(3) {
-    width: 17px;
-    height: 25px;
-    background-position: -392px -316px;
-    background-size: 400%;
+    width: 64px;
+    height: 64px;
+    background-position: -128px 0px;
+    background-size: auto;
   }
   .plane:nth-child(4) {
-    width: 23px;
-    height: 28px;
-    background-position: -380px -456px;
-    background-size: 400%;
+    width: 64px;
+    height: 64px;
+    background-position: -192px 0px;
+    background-size: auto;
   }
   .plane:nth-child(5) {
-    width: 21px;
-    height: 28px;
-    background-position: -384px -604px;
-    background-size: 400%;
+    width: 64px;
+    height: 64px;
+    background-position: -256px 0px;
+    background-size: auto;
   }
   </style>
 </head>
@@ -188,6 +188,25 @@
       
       // Initialize NPC planes but don't start them yet
       initializeNPCPlanes();
+      
+      // TEST: Force show one plane to verify sprite sheet works
+      setTimeout(() => {
+        const testPlane = document.createElement('div');
+        testPlane.className = 'plane';
+        testPlane.style.cssText = `
+          position: fixed;
+          top: 100px;
+          left: 100px;
+          width: 64px;
+          height: 64px;
+          background: url('images/planes_spritesheet.gif') no-repeat;
+          background-position: 0px 0px;
+          border: 2px solid red;
+          z-index: 1000;
+        `;
+        document.body.appendChild(testPlane);
+        console.log('🎯 Added test plane at 100,100 with red border');
+      }, 1000);
 
       // Cloud movement system
       const clouds = document.querySelectorAll('.cloud');
