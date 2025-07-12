@@ -132,113 +132,6 @@
 
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-      console.log('🚀 DOM loaded, starting game initialization...');
-      
-      // Check if sprite sheet loads
-      const testImg = new Image();
-      testImg.onload = function() {
-        console.log('✅ Sprite sheet loaded successfully!');
-      };
-      testImg.onerror = function() {
-        console.error('❌ Failed to load sprite sheet: images/planes_spritesheet.gif');
-      };
-      testImg.src = 'images/planes_spritesheet.gif';
-      
-      // Self-diagnostic function
-      function runDiagnostics() {
-        console.log('🔧 Running diagnostics...');
-        
-        // Check DOM elements
-        const allPlanes = document.querySelectorAll('.plane');
-        const playerPlane = document.getElementById('playerPlane');
-        console.log('✅ Found', allPlanes.length, 'planes total');
-        console.log('✅ Player plane exists:', !!playerPlane);
-        
-        // Check CSS styles
-        allPlanes.forEach((plane, index) => {
-          const computed = window.getComputedStyle(plane);
-          console.log(`Plane ${index + 1}:`, {
-            display: computed.display,
-            position: computed.position,
-            width: computed.width,
-            height: computed.height,
-            backgroundImage: computed.backgroundImage,
-            transform: computed.transform
-          });
-        });
-        
-        // Test sprite visibility by creating a visible test plane
-        const testPlane = document.createElement('div');
-        testPlane.style.cssText = `
-          position: fixed;
-          top: 50px;
-          left: 50px;
-          width: 64px;
-          height: 111px;
-          background: url('images/planes_spritesheet.gif') no-repeat;
-          background-position: -394px -708px;
-          background-size: 400%;
-          border: 2px solid red;
-          z-index: 1000;
-        `;
-        document.body.appendChild(testPlane);
-        console.log('🎯 Added test plane at top-left with red border');
-        
-        // Remove test plane after 3 seconds
-        setTimeout(() => {
-          testPlane.remove();
-          console.log('🗑️ Removed test plane');
-        }, 3000);
-      }
-      
-      // Run diagnostics after a short delay
-      setTimeout(runDiagnostics, 500);
-      
-      // EMERGENCY TEST: Force show all planes immediately
-      setTimeout(() => {
-        console.log('🚨 EMERGENCY TEST: Force showing all planes...');
-        const allPlanes = document.querySelectorAll('.plane');
-        allPlanes.forEach((plane, index) => {
-          plane.style.display = 'block';
-          plane.style.position = 'fixed';
-          plane.style.left = (index * 100 + 50) + 'px';
-          plane.style.top = '200px';
-          plane.style.width = '50px';
-          plane.style.height = '50px';
-          plane.style.backgroundColor = `hsl(${index * 60}, 100%, 50%)`;
-          plane.style.border = '3px solid black';
-          plane.style.zIndex = '999';
-          console.log(`🔴 Force-showed plane ${index + 1} at position ${index * 100 + 50}px`);
-        });
-      }, 2000);
-      
-      // SIMPLE CLICK TEST: Use mousedown instead of click to avoid conflicts
-      document.addEventListener('mousedown', function(e) {
-        console.log('🔥 MOUSEDOWN DETECTED! Button:', e.button, 'at:', e.clientX, e.clientY);
-        
-        // Create a test div at click location
-        const testDiv = document.createElement('div');
-        testDiv.style.cssText = `
-          position: fixed;
-          left: ${e.clientX - 25}px;
-          top: ${e.clientY - 25}px;
-          width: 50px;
-          height: 50px;
-          background: red;
-          border: 2px solid yellow;
-          z-index: 9999;
-          border-radius: 50%;
-        `;
-        document.body.appendChild(testDiv);
-        console.log('🎯 Created test circle at mousedown location');
-        
-        // Remove after 2 seconds
-        setTimeout(() => {
-          testDiv.remove();
-        }, 2000);
-        
-        // Don't prevent default yet - let's see if this works first
-      }, true); // Use capture phase
       
       // NPC plane data and management
       const npcPlanes = [];
@@ -246,52 +139,31 @@
       
       function initializeNPCPlanes() {
         const planes = document.querySelectorAll('.plane');
-        console.log('🔍 Found', planes.length, 'total planes on page');
-        
         planes.forEach((plane, index) => {
-          console.log(`Plane ${index + 1}:`, plane, 'ID:', plane.id);
-          
-          // Skip plane 2 (index 1) as it's the player plane
-          if (plane.id === 'playerPlane') {
-            console.log('⏭️ Skipping player plane');
-            return;
-          }
+          // Skip player plane
+          if (plane.id === 'playerPlane') return;
           
           // Initially hide all NPC planes
           plane.style.display = 'none';
-          console.log(`🙈 Hidden NPC plane ${index + 1}`);
           
           // Store plane data for later spawning
           const planeData = {
             element: plane,
-            lastFireTime: 0 // Track when this plane last fired
+            lastFireTime: 0
           };
           npcPlanes.push(planeData);
-          console.log(`📋 Added NPC plane ${index + 1} to array`);
         });
-        
-        console.log('📊 Total NPC planes initialized:', npcPlanes.length);
       }
       
       function startNPCPlanes() {
-        console.log('🎯 startNPCPlanes called, already started?', npcPlanesStarted);
         if (npcPlanesStarted) return;
         npcPlanesStarted = true;
         
-        console.log('🛩️ Found', npcPlanes.length, 'NPC planes to start');
-        
         npcPlanes.forEach((planeData, index) => {
           const plane = planeData.element;
-          console.log(`✈️ Starting NPC plane ${index + 1}:`, plane);
           
           // Show the plane
           plane.style.display = 'block';
-          console.log(`👁️ NPC plane ${index + 1} display set to block`);
-          
-          // FALLBACK: Add colored background so we can see if planes exist
-          plane.style.backgroundColor = `rgba(255, ${100 + index * 30}, 0, 0.8)`;
-          plane.style.border = '2px solid white';
-          console.log(`🎨 Added fallback colors to NPC plane ${index + 1}`);
           
           // Random horizontal position (5% to 95%)
           const randomLeft = Math.random() * 90 + 5;
@@ -301,8 +173,6 @@
           const randomStart = -(Math.random() * 150 + 150);
           plane.style.top = randomStart + 'px';
           
-          console.log(`📌 NPC plane ${index + 1} positioned at:`, plane.style.left, plane.style.top);
-          
           // Random speed (1.33 to 4 seconds) - 50% faster than before
           const randomDuration = (Math.random() * 4 + 2) / 1.5;
           
@@ -310,16 +180,11 @@
           const randomDelay = Math.random() * 3;
           
           // Add animation with proper timing
-          const animationStr = `flyDown ${randomDuration}s linear ${randomDelay}s infinite`;
-          plane.style.animation = animationStr;
-          console.log(`🎬 NPC plane ${index + 1} animation:`, animationStr);
+          plane.style.animation = `flyDown ${randomDuration}s linear ${randomDelay}s infinite`;
           
           // Set initial fire time with random offset
           planeData.lastFireTime = Date.now() + (Math.random() * 5500);
-          
         });
-        
-        console.log('🚀 All NPC planes started!');
       }
       
       // Initialize NPC planes but don't start them yet
@@ -408,62 +273,38 @@
       // Track pressed keys for smooth movement
       const keys = {};
       
-      // Mouse click handlers (TEMPORARILY DISABLED FOR TESTING)
-      /*
+      // Mouse click handlers
       document.addEventListener('mousedown', function(e) {
-        console.log('🖱️ Mouse clicked! Button:', e.button, 'isSpawned:', isSpawned);
-        
         // Only respond to left click (button 0) for spawning
-        if (e.button !== 0) {
-          console.log('❌ Not left click, ignoring');
-          return;
-        }
+        if (e.button !== 0) return;
         
         // Don't spawn if already spawned or clicking on controls
-        if (isSpawned || e.target.closest('.controls')) {
-          console.log('❌ Already spawned or clicked controls, ignoring');
-          return;
-        }
-        
-        console.log('✅ Valid click! Starting spawn process...');
+        if (isSpawned || e.target.closest('.controls')) return;
         
         // Calculate position as percentage
         playerX = (e.clientX / window.innerWidth) * 100;
         playerY = (e.clientY / window.innerHeight) * 100;
-        console.log('📍 Player position:', playerX.toFixed(1) + '%', playerY.toFixed(1) + '%');
         
         // Disable the flyUp animation for player plane
         playerPlane.style.animation = 'none';
-        console.log('🛩️ Player plane found:', !!playerPlane);
         
         // Show the plane
         playerPlane.style.display = 'block';
-        console.log('👁️ Player plane display set to block');
-        
-        // FALLBACK: Add colored background so we can see if player plane exists
-        playerPlane.style.backgroundColor = 'rgba(0, 255, 0, 0.8)';
-        playerPlane.style.border = '2px solid blue';
-        console.log('🎨 Added fallback colors to player plane');
         
         // Position the plane
         playerPlane.style.left = playerX + '%';
         playerPlane.style.top = playerY + '%';
-        console.log('📌 Player plane positioned at:', playerPlane.style.left, playerPlane.style.top);
         
         // Add spawn effect with slight scale animation
         playerPlane.style.transform = 'translate(-50%, -50%) rotate(0deg) scale(0.8)';
         setTimeout(() => {
           playerPlane.style.transform = 'translate(-50%, -50%) rotate(0deg) scale(1)';
-          console.log('🎬 Player plane animation completed');
         }, 100);
         
         isSpawned = true;
-        console.log('✅ Player spawned successfully!');
         
         // Start NPC planes when player spawns
-        console.log('🚀 Starting NPC planes...');
         startNPCPlanes();
-        
         
         // Update controls text to show plane is spawned
         const controlsDiv = document.querySelector('.controls');
@@ -472,7 +313,6 @@
         // Prevent default behavior
         e.preventDefault();
       });
-      */ // END COMMENT FOR TESTING
       
       
       // Projectile creation function - fires 3 in a straight line
