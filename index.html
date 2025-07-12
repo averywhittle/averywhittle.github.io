@@ -13,10 +13,12 @@
     background: url('images/planes_spritesheet.gif') no-repeat;
     image-rendering: pixelated;
     transform: rotate(180deg); /* Point downwards */
-    /* Animation will be added when planes spawn */
   }
   
   @keyframes flyDown {
+    from {
+      top: -150px;
+    }
     to {
       top: 110%;
     }
@@ -52,51 +54,49 @@
     image-rendering: auto; /* Smooth rendering for clouds */
     opacity: 0.95; /* Increased opacity */
   }
+  
+  /* First NPC plane */
+  .plane:nth-child(1) {
+    width: 20px;
+    height: 26px;
+    background-position: -392px -188px;
+    background-size: 400%;
+  }
+  /* Player-controlled SU-33 - 75% smaller */
+  .plane:nth-child(2) {
+    width: 16px;
+    height: 28px;
+    background-position: -394px -708px; /* SU-33 sprite */
+    background-size: 400%; /* Scale sprite sheet to maintain detail */
+    z-index: 10;
+    box-shadow: 0 0 3px rgba(255, 255, 255, 0.5);
+    display: none; /* Hidden by default */
+    transform: translate(-50%, -50%); /* No rotation for player */
+    transition: transform 0.1s ease;
+    animation: none; /* Override flyDown animation for player */
+    position: fixed; /* Use fixed positioning for player control */
+  }
+  .plane:nth-child(3) {
+    width: 17px;
+    height: 25px;
+    background-position: -392px -316px;
+    background-size: 400%;
+  }
+  .plane:nth-child(4) {
+    width: 23px;
+    height: 28px;
+    background-position: -380px -456px;
+    background-size: 400%;
+  }
+  .plane:nth-child(5) {
+    width: 21px;
+    height: 28px;
+    background-position: -384px -604px;
+    background-size: 400%;
+  }
   </style>
 </head>
 <body>
-  <!-- Player plane styles -->
-  <style>
-    /* First NPC plane */
-    .plane:nth-child(1) {
-      width: 20px;
-      height: 26px;
-      background-position: -392px -188px;
-      background-size: 400%;
-    }
-    /* Player-controlled SU-33 - 75% smaller */
-    .plane:nth-child(2) {
-      width: 16px;
-      height: 28px;
-      background-position: -394px -708px; /* SU-33 sprite */
-      background-size: 400%; /* Scale sprite sheet to maintain detail */
-      z-index: 10;
-      box-shadow: 0 0 3px rgba(255, 255, 255, 0.5);
-      display: none; /* Hidden by default */
-      transform: translate(-50%, -50%); /* No rotation for player */
-      transition: transform 0.1s ease;
-      animation: none; /* Override flyDown animation for player */
-      position: fixed; /* Use fixed positioning for player control */
-    }
-    .plane:nth-child(3) {
-      width: 17px;
-      height: 25px;
-      background-position: -392px -316px;
-      background-size: 400%;
-    }
-    .plane:nth-child(4) {
-      width: 23px;
-      height: 28px;
-      background-position: -380px -456px;
-      background-size: 400%;
-    }
-    .plane:nth-child(5) {
-      width: 21px;
-      height: 28px;
-      background-position: -384px -604px;
-      background-size: 400%;
-    }
-  </style>
 
   <div class="plane"></div>
   <div class="plane" id="playerPlane"></div>
@@ -129,16 +129,15 @@
     Space - Fire Projectile
   </div>
 
-
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-      
       // NPC plane data and management
       const npcPlanes = [];
       let npcPlanesStarted = false;
       
       function initializeNPCPlanes() {
         const planes = document.querySelectorAll('.plane');
+        
         planes.forEach((plane, index) => {
           // Skip player plane
           if (plane.id === 'playerPlane') return;
@@ -194,7 +193,6 @@
       const clouds = document.querySelectorAll('.cloud');
       const cloudData = [];
       
-      
       clouds.forEach((cloud, index) => {
         // Random initial position
         const initialX = Math.random() * 100;
@@ -217,7 +215,6 @@
           speed: pixelsPerSecond,
           direction: direction
         });
-        
       });
       
       // Update clouds position
@@ -313,7 +310,6 @@
         // Prevent default behavior
         e.preventDefault();
       });
-      
       
       // Projectile creation function - fires 3 in a straight line
       function createProjectileBurst() {
@@ -474,7 +470,7 @@
       // Game loop for smooth movement
       function updatePlayerPosition() {
         if (isSpawned) {
-          let dx = 0, dy = 0; // Direction vectors (can be fractional for smooth movement)
+          let dx = 0, dy = 0; // Direction vectors
           
           // Calculate movement vectors with precise directional control
           if (keys['w'] || keys['arrowup']) {
