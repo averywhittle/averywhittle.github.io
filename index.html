@@ -272,11 +272,21 @@
       
       // Mouse click handlers
       document.addEventListener('mousedown', function(e) {
+        console.log('🖱️ Click detected! Button:', e.button, 'isSpawned:', isSpawned, 'target:', e.target);
+        
         // Only respond to left click (button 0) for spawning
-        if (e.button !== 0) return;
+        if (e.button !== 0) {
+          console.log('❌ Not left click, ignoring');
+          return;
+        }
         
         // Don't spawn if already spawned or clicking on controls
-        if (isSpawned || e.target.closest('.controls')) return;
+        if (isSpawned || e.target.closest('.controls')) {
+          console.log('❌ Already spawned or clicked controls. isSpawned:', isSpawned, 'controls:', !!e.target.closest('.controls'));
+          return;
+        }
+        
+        console.log('✅ Valid click! Starting spawn...');
         
         // Calculate position as percentage
         playerX = (e.clientX / window.innerWidth) * 100;
@@ -299,6 +309,7 @@
         }, 100);
         
         isSpawned = true;
+        console.log('✅ Player spawned! isSpawned now:', isSpawned);
         
         // Start NPC planes when player spawns
         startNPCPlanes();
