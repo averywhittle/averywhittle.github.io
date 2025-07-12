@@ -10,12 +10,10 @@
   }
   .plane {
     position: absolute;
-    left: 0;
-    top: -150px;
     background: url('images/planes_spritesheet.gif') no-repeat;
     image-rendering: pixelated;
-    animation: flyDown linear infinite;
     transform: rotate(180deg); /* Point downwards */
+    /* Animation will be added when planes spawn */
   }
   
   @keyframes flyDown {
@@ -177,17 +175,18 @@
           const randomLeft = Math.random() * 90 + 5;
           plane.style.left = randomLeft + '%';
           
-          // Random speed (1.33 to 4 seconds) - 50% faster than before
-          const randomDuration = (Math.random() * 4 + 2) / 1.5;
-          plane.style.animationDuration = randomDuration + 's';
-          
-          // Random delay (0 to 3 seconds)
-          const randomDelay = Math.random() * 3;
-          plane.style.animationDelay = randomDelay + 's';
-          
           // Random starting position offset (-150 to -300px)
           const randomStart = -(Math.random() * 150 + 150);
           plane.style.top = randomStart + 'px';
+          
+          // Random speed (1.33 to 4 seconds) - 50% faster than before
+          const randomDuration = (Math.random() * 4 + 2) / 1.5;
+          
+          // Random delay (0 to 3 seconds)
+          const randomDelay = Math.random() * 3;
+          
+          // Add animation with proper timing
+          plane.style.animation = `flyDown ${randomDuration}s linear ${randomDelay}s infinite`;
           
           // Set initial fire time with random offset
           planeData.lastFireTime = Date.now() + (Math.random() * 5500);
