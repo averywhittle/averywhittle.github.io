@@ -194,6 +194,50 @@
       // Run diagnostics after a short delay
       setTimeout(runDiagnostics, 500);
       
+      // EMERGENCY TEST: Force show all planes immediately
+      setTimeout(() => {
+        console.log('🚨 EMERGENCY TEST: Force showing all planes...');
+        const allPlanes = document.querySelectorAll('.plane');
+        allPlanes.forEach((plane, index) => {
+          plane.style.display = 'block';
+          plane.style.position = 'fixed';
+          plane.style.left = (index * 100 + 50) + 'px';
+          plane.style.top = '200px';
+          plane.style.width = '50px';
+          plane.style.height = '50px';
+          plane.style.backgroundColor = `hsl(${index * 60}, 100%, 50%)`;
+          plane.style.border = '3px solid black';
+          plane.style.zIndex = '999';
+          console.log(`🔴 Force-showed plane ${index + 1} at position ${index * 100 + 50}px`);
+        });
+      }, 2000);
+      
+      // SIMPLE CLICK TEST: Bypass all game logic
+      document.addEventListener('click', function(e) {
+        console.log('🔥 SIMPLE CLICK DETECTED at:', e.clientX, e.clientY);
+        
+        // Create a test div at click location
+        const testDiv = document.createElement('div');
+        testDiv.style.cssText = `
+          position: fixed;
+          left: ${e.clientX - 25}px;
+          top: ${e.clientY - 25}px;
+          width: 50px;
+          height: 50px;
+          background: red;
+          border: 2px solid yellow;
+          z-index: 9999;
+          border-radius: 50%;
+        `;
+        document.body.appendChild(testDiv);
+        console.log('🎯 Created test circle at click location');
+        
+        // Remove after 2 seconds
+        setTimeout(() => {
+          testDiv.remove();
+        }, 2000);
+      });
+      
       // NPC plane data and management
       const npcPlanes = [];
       let npcPlanesStarted = false;
