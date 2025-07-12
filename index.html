@@ -143,6 +143,57 @@
         console.error('❌ Failed to load sprite sheet: images/planes_spritesheet.gif');
       };
       testImg.src = 'images/planes_spritesheet.gif';
+      
+      // Self-diagnostic function
+      function runDiagnostics() {
+        console.log('🔧 Running diagnostics...');
+        
+        // Check DOM elements
+        const allPlanes = document.querySelectorAll('.plane');
+        const playerPlane = document.getElementById('playerPlane');
+        console.log('✅ Found', allPlanes.length, 'planes total');
+        console.log('✅ Player plane exists:', !!playerPlane);
+        
+        // Check CSS styles
+        allPlanes.forEach((plane, index) => {
+          const computed = window.getComputedStyle(plane);
+          console.log(`Plane ${index + 1}:`, {
+            display: computed.display,
+            position: computed.position,
+            width: computed.width,
+            height: computed.height,
+            backgroundImage: computed.backgroundImage,
+            transform: computed.transform
+          });
+        });
+        
+        // Test sprite visibility by creating a visible test plane
+        const testPlane = document.createElement('div');
+        testPlane.style.cssText = `
+          position: fixed;
+          top: 50px;
+          left: 50px;
+          width: 64px;
+          height: 111px;
+          background: url('images/planes_spritesheet.gif') no-repeat;
+          background-position: -394px -708px;
+          background-size: 400%;
+          border: 2px solid red;
+          z-index: 1000;
+        `;
+        document.body.appendChild(testPlane);
+        console.log('🎯 Added test plane at top-left with red border');
+        
+        // Remove test plane after 3 seconds
+        setTimeout(() => {
+          testPlane.remove();
+          console.log('🗑️ Removed test plane');
+        }, 3000);
+      }
+      
+      // Run diagnostics after a short delay
+      setTimeout(runDiagnostics, 500);
+      
       // NPC plane data and management
       const npcPlanes = [];
       let npcPlanesStarted = false;
@@ -190,6 +241,11 @@
           // Show the plane
           plane.style.display = 'block';
           console.log(`👁️ NPC plane ${index + 1} display set to block`);
+          
+          // FALLBACK: Add colored background so we can see if planes exist
+          plane.style.backgroundColor = `rgba(255, ${100 + index * 30}, 0, 0.8)`;
+          plane.style.border = '2px solid white';
+          console.log(`🎨 Added fallback colors to NPC plane ${index + 1}`);
           
           // Random horizontal position (5% to 95%)
           const randomLeft = Math.random() * 90 + 5;
@@ -336,6 +392,11 @@
         // Show the plane
         playerPlane.style.display = 'block';
         console.log('👁️ Player plane display set to block');
+        
+        // FALLBACK: Add colored background so we can see if player plane exists
+        playerPlane.style.backgroundColor = 'rgba(0, 255, 0, 0.8)';
+        playerPlane.style.border = '2px solid blue';
+        console.log('🎨 Added fallback colors to player plane');
         
         // Position the plane
         playerPlane.style.left = playerX + '%';
