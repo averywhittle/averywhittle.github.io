@@ -212,9 +212,9 @@
         });
       }, 2000);
       
-      // SIMPLE CLICK TEST: Bypass all game logic
-      document.addEventListener('click', function(e) {
-        console.log('🔥 SIMPLE CLICK DETECTED at:', e.clientX, e.clientY);
+      // SIMPLE CLICK TEST: Use mousedown instead of click to avoid conflicts
+      document.addEventListener('mousedown', function(e) {
+        console.log('🔥 MOUSEDOWN DETECTED! Button:', e.button, 'at:', e.clientX, e.clientY);
         
         // Create a test div at click location
         const testDiv = document.createElement('div');
@@ -230,13 +230,15 @@
           border-radius: 50%;
         `;
         document.body.appendChild(testDiv);
-        console.log('🎯 Created test circle at click location');
+        console.log('🎯 Created test circle at mousedown location');
         
         // Remove after 2 seconds
         setTimeout(() => {
           testDiv.remove();
         }, 2000);
-      });
+        
+        // Don't prevent default yet - let's see if this works first
+      }, true); // Use capture phase
       
       // NPC plane data and management
       const npcPlanes = [];
@@ -406,7 +408,8 @@
       // Track pressed keys for smooth movement
       const keys = {};
       
-      // Mouse click handlers
+      // Mouse click handlers (TEMPORARILY DISABLED FOR TESTING)
+      /*
       document.addEventListener('mousedown', function(e) {
         console.log('🖱️ Mouse clicked! Button:', e.button, 'isSpawned:', isSpawned);
         
@@ -469,6 +472,7 @@
         // Prevent default behavior
         e.preventDefault();
       });
+      */ // END COMMENT FOR TESTING
       
       
       // Projectile creation function - fires 3 in a straight line
