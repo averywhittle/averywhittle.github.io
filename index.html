@@ -132,22 +132,37 @@
 
   <script>
     document.addEventListener('DOMContentLoaded', function() {
+      console.log('🚀 DOM loaded, starting game initialization...');
+      
+      // Check if sprite sheet loads
+      const testImg = new Image();
+      testImg.onload = function() {
+        console.log('✅ Sprite sheet loaded successfully!');
+      };
+      testImg.onerror = function() {
+        console.error('❌ Failed to load sprite sheet: images/planes_spritesheet.gif');
+      };
+      testImg.src = 'images/planes_spritesheet.gif';
       // NPC plane data and management
       const npcPlanes = [];
       let npcPlanesStarted = false;
       
       function initializeNPCPlanes() {
         const planes = document.querySelectorAll('.plane');
+        console.log('🔍 Found', planes.length, 'total planes on page');
         
         planes.forEach((plane, index) => {
+          console.log(`Plane ${index + 1}:`, plane, 'ID:', plane.id);
           
           // Skip plane 2 (index 1) as it's the player plane
           if (plane.id === 'playerPlane') {
+            console.log('⏭️ Skipping player plane');
             return;
           }
           
           // Initially hide all NPC planes
           plane.style.display = 'none';
+          console.log(`🙈 Hidden NPC plane ${index + 1}`);
           
           // Store plane data for later spawning
           const planeData = {
@@ -155,21 +170,26 @@
             lastFireTime: 0 // Track when this plane last fired
           };
           npcPlanes.push(planeData);
+          console.log(`📋 Added NPC plane ${index + 1} to array`);
         });
         
+        console.log('📊 Total NPC planes initialized:', npcPlanes.length);
       }
       
       function startNPCPlanes() {
+        console.log('🎯 startNPCPlanes called, already started?', npcPlanesStarted);
         if (npcPlanesStarted) return;
         npcPlanesStarted = true;
         
+        console.log('🛩️ Found', npcPlanes.length, 'NPC planes to start');
         
         npcPlanes.forEach((planeData, index) => {
           const plane = planeData.element;
-          
+          console.log(`✈️ Starting NPC plane ${index + 1}:`, plane);
           
           // Show the plane
           plane.style.display = 'block';
+          console.log(`👁️ NPC plane ${index + 1} display set to block`);
           
           // Random horizontal position (5% to 95%)
           const randomLeft = Math.random() * 90 + 5;
@@ -179,6 +199,8 @@
           const randomStart = -(Math.random() * 150 + 150);
           plane.style.top = randomStart + 'px';
           
+          console.log(`📌 NPC plane ${index + 1} positioned at:`, plane.style.left, plane.style.top);
+          
           // Random speed (1.33 to 4 seconds) - 50% faster than before
           const randomDuration = (Math.random() * 4 + 2) / 1.5;
           
@@ -186,13 +208,16 @@
           const randomDelay = Math.random() * 3;
           
           // Add animation with proper timing
-          plane.style.animation = `flyDown ${randomDuration}s linear ${randomDelay}s infinite`;
+          const animationStr = `flyDown ${randomDuration}s linear ${randomDelay}s infinite`;
+          plane.style.animation = animationStr;
+          console.log(`🎬 NPC plane ${index + 1} animation:`, animationStr);
           
           // Set initial fire time with random offset
           planeData.lastFireTime = Date.now() + (Math.random() * 5500);
           
         });
         
+        console.log('🚀 All NPC planes started!');
       }
       
       // Initialize NPC planes but don't start them yet
@@ -283,36 +308,52 @@
       
       // Mouse click handlers
       document.addEventListener('mousedown', function(e) {
+        console.log('🖱️ Mouse clicked! Button:', e.button, 'isSpawned:', isSpawned);
+        
         // Only respond to left click (button 0) for spawning
-        if (e.button !== 0) return;
+        if (e.button !== 0) {
+          console.log('❌ Not left click, ignoring');
+          return;
+        }
         
         // Don't spawn if already spawned or clicking on controls
-        if (isSpawned || e.target.closest('.controls')) return;
+        if (isSpawned || e.target.closest('.controls')) {
+          console.log('❌ Already spawned or clicked controls, ignoring');
+          return;
+        }
+        
+        console.log('✅ Valid click! Starting spawn process...');
         
         // Calculate position as percentage
         playerX = (e.clientX / window.innerWidth) * 100;
         playerY = (e.clientY / window.innerHeight) * 100;
+        console.log('📍 Player position:', playerX.toFixed(1) + '%', playerY.toFixed(1) + '%');
         
         // Disable the flyUp animation for player plane
         playerPlane.style.animation = 'none';
+        console.log('🛩️ Player plane found:', !!playerPlane);
         
         // Show the plane
         playerPlane.style.display = 'block';
+        console.log('👁️ Player plane display set to block');
         
         // Position the plane
         playerPlane.style.left = playerX + '%';
         playerPlane.style.top = playerY + '%';
+        console.log('📌 Player plane positioned at:', playerPlane.style.left, playerPlane.style.top);
         
         // Add spawn effect with slight scale animation
         playerPlane.style.transform = 'translate(-50%, -50%) rotate(0deg) scale(0.8)';
         setTimeout(() => {
           playerPlane.style.transform = 'translate(-50%, -50%) rotate(0deg) scale(1)';
+          console.log('🎬 Player plane animation completed');
         }, 100);
         
         isSpawned = true;
-        
+        console.log('✅ Player spawned successfully!');
         
         // Start NPC planes when player spawns
+        console.log('🚀 Starting NPC planes...');
         startNPCPlanes();
         
         
