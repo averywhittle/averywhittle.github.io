@@ -10,9 +10,11 @@
   }
   .plane {
     position: absolute;
-    background: url('images/planes_spritesheet.gif') no-repeat;
     image-rendering: pixelated;
     transform: rotate(180deg); /* Point downwards */
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
   }
   
   @keyframes flyDown {
@@ -55,19 +57,17 @@
     opacity: 0.95; /* Increased opacity */
   }
   
-  /* First NPC plane */
+  /* First NPC plane - F16 */
   .plane:nth-child(1) {
-    width: 64px;
-    height: 64px;
-    background-position: 0px 0px;
-    background-size: auto;
+    width: 60px;
+    height: 92px;
+    background-image: url('sprites/plane_23.png');
   }
-  /* Player-controlled plane */
+  /* Player-controlled plane - Fighter jet */
   .plane:nth-child(2) {
-    width: 64px;
-    height: 64px;
-    background-position: -64px 0px;
-    background-size: auto;
+    width: 68px;
+    height: 100px;
+    background-image: url('sprites/plane_33.png');
     z-index: 10;
     box-shadow: 0 0 3px rgba(255, 255, 255, 0.5);
     display: none; /* Hidden by default */
@@ -77,22 +77,19 @@
     position: fixed; /* Use fixed positioning for player control */
   }
   .plane:nth-child(3) {
-    width: 64px;
-    height: 64px;
-    background-position: -128px 0px;
-    background-size: auto;
+    width: 92px;
+    height: 112px;
+    background-image: url('sprites/plane_49.png');
   }
   .plane:nth-child(4) {
-    width: 64px;
-    height: 64px;
-    background-position: -192px 0px;
-    background-size: auto;
+    width: 84px;
+    height: 112px;
+    background-image: url('sprites/plane_59.png');
   }
   .plane:nth-child(5) {
-    width: 64px;
-    height: 64px;
-    background-position: -256px 0px;
-    background-size: auto;
+    width: 92px;
+    height: 136px;
+    background-image: url('sprites/plane_70.png');
   }
   </style>
 </head>
@@ -189,24 +186,6 @@
       // Initialize NPC planes but don't start them yet
       initializeNPCPlanes();
       
-      // TEST: Force show one plane to verify sprite sheet works
-      setTimeout(() => {
-        const testPlane = document.createElement('div');
-        testPlane.className = 'plane';
-        testPlane.style.cssText = `
-          position: fixed;
-          top: 100px;
-          left: 100px;
-          width: 64px;
-          height: 64px;
-          background: url('images/planes_spritesheet.gif') no-repeat;
-          background-position: 0px 0px;
-          border: 2px solid red;
-          z-index: 1000;
-        `;
-        document.body.appendChild(testPlane);
-        console.log('🎯 Added test plane at 100,100 with red border');
-      }, 1000);
 
       // Cloud movement system
       const clouds = document.querySelectorAll('.cloud');
