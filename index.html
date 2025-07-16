@@ -169,14 +169,36 @@
           const randomStart = -(Math.random() * 150 + 150);
           plane.style.top = randomStart + 'px';
           
-          // Random speed (1.33 to 4 seconds) - 50% faster than before
-          const randomDuration = (Math.random() * 4 + 2) / 1.5;
+          // Function to set random animation for this plane
+          function setRandomAnimation() {
+            // Random speed (2 to 8 seconds) - wider range for more variety
+            const randomDuration = Math.random() * 6 + 2;
+            
+            // Random delay (0 to 3 seconds)
+            const randomDelay = Math.random() * 3;
+            
+            // Add animation with proper timing
+            plane.style.animation = `flyDown ${randomDuration}s linear ${randomDelay}s infinite`;
+          }
           
-          // Random delay (0 to 3 seconds)
-          const randomDelay = Math.random() * 3;
+          // Set initial random animation
+          setRandomAnimation();
           
-          // Add animation with proper timing
-          plane.style.animation = `flyDown ${randomDuration}s linear ${randomDelay}s infinite`;
+          // Add event listener to randomize speed on each animation iteration
+          plane.addEventListener('animationiteration', function() {
+            // Remove current animation
+            plane.style.animation = 'none';
+            
+            // Force reflow
+            void plane.offsetHeight;
+            
+            // Random horizontal position for next pass
+            const newLeft = Math.random() * 90 + 5;
+            plane.style.left = newLeft + '%';
+            
+            // Set new random animation
+            setRandomAnimation();
+          });
           
           // Set initial fire time with random offset
           planeData.lastFireTime = Date.now() + (Math.random() * 5500);
